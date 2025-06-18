@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  stars: 1
+  comments: MyText
+  rateable: one
+  rateable_type: Rateable
+
+two:
+  user: two
+  stars: 1
+  comments: MyText
+  rateable: two
+  rateable_type: Rateable

@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  booking: one
+  payment_type: MyString
+  payment_status: false
+
+two:
+  booking: two
+  payment_type: MyString
+  payment_status: false

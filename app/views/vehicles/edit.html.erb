@@ -1,0 +1,9 @@
+<h1>Edit Vehicle</h1>
+<%= form_with model: @vehicle do |f| %>
+  <p>Model: <%= f.text_field :model %></p>
+  <p>Type: <%= f.text_field :vehicle_type %></p>
+  <p>License Plate: <%= f.text_field :licence_plate %></p>
+  <p>Capacity: <%= f.number_field :capacity %></p>
+  <p>Tags: <%= f.collection_check_boxes :tag_ids, Tag.all, :id, :name %></p>
+  <%= f.submit "Update Vehicle" %>
+<% end %>

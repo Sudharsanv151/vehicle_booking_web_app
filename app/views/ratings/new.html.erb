@@ -1,0 +1,9 @@
+<h1>Rate <%= params[:rateable_type] %></h1>
+
+<%= form_with model: @rating, local: true do |f| %>
+  <%= f.hidden_field :rateable_type, value: params[:rateable_type] %>
+  <%= f.hidden_field :rateable_id, value: params[:rateable_id] %>
+  <p>Stars (1-5): <%= f.number_field :stars, in: 1..5 %></p>
+  <p>Comments: <%= f.text_area :comments %></p>
+  <%= f.submit "Submit Rating" %>
+<% end %>

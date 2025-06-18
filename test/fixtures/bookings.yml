@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  vehicle: one
+  start_location: MyString
+  end_location: MyString
+  price: 1.5
+  booking_date: 2025-06-18 20:30:13
+  status: false
+  start_time: 2025-06-18 20:30:13
+  end_time: 2025-06-18 20:30:13
+  ride_status: false
+
+two:
+  user: two
+  vehicle: two
+  start_location: MyString
+  end_location: MyString
+  price: 1.5
+  booking_date: 2025-06-18 20:30:13
+  status: false
+  start_time: 2025-06-18 20:30:13
+  end_time: 2025-06-18 20:30:13
+  ride_status: false

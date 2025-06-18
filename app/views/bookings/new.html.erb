@@ -1,0 +1,9 @@
+<h1>Book Vehicle: <%= @vehicle.model %></h1>
+
+<%= form_with model: @booking, url: bookings_path, local: true do |f| %>
+  <%= f.hidden_field :vehicle_id, value: @vehicle.id %>
+  <p>Start Location: <%= f.text_field :start_location %></p>
+  <p>End Location: <%= f.text_field :end_location %></p>
+  <p>Price: <%= f.number_field :price, step: 0.01 %></p>
+  <%= f.submit "Confirm Booking" %>
+<% end %>

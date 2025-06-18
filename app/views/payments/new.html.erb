@@ -1,0 +1,11 @@
+<h1>Make Payment for Booking</h1>
+
+<% if @booking %>
+  <%= form_with model: @payment, local: true do |f| %>
+    <%= f.hidden_field :booking_id, value: @booking.id %>
+    <p>Payment Type: <%= f.select :payment_type, ["Cash", "Card", "UPI"] %></p>
+    <%= f.submit "Pay Now" %>
+  <% end %>
+<% else %>
+  <p style="color: red;">Booking not found. Please return to your dashboard.</p>
+<% end %>
