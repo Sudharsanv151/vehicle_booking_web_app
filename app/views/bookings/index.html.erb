@@ -1,0 +1,39 @@
+<h2>Requested Rides</h2>
+<% @requested.each do |booking| %>
+  <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+
+    <p><%= booking.vehicle.model %> from <%= booking.start_location %> to <%= booking.end_location %></p>
+
+  </div>
+<% end %>
+
+<h2>Ongoing Rides</h2>
+
+<% @ongoing.each do |booking| %>
+  <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+
+    <p><strong>Vehicle:</strong> <%= booking.vehicle.model %></p>
+    <p><strong>From:</strong> <%= booking.start_location %></p>
+    <p><strong>To:</strong> <%= booking.end_location %></p>
+    <p><strong>Price:</strong> ₹<%= booking.price %></p>
+
+    <% if booking.payment.blank? %>
+      <p><%= link_to "Make Payment", new_payment_path(booking_id: booking.id) %></p>
+    <% else %>
+      <p><strong>Payment:</strong> Paid via <%= booking.payment.payment_type %></p>
+    <% end %>
+
+    <% ride_rating = booking.ratings.find_by(user_id: booking.user_id) %>
+
+    <% if ride_rating.nil? %>
+      <%= link_to "Rate Ride", new_rating_path(rateable_type: 'Booking', rateable_id: booking.id) %>
+    <% end %>
+
+    <% vehicle_rating = booking.vehicle.ratings.find_by(user_id: booking.user_id) %>
+
+    <% if vehicle_rating.nil? %>
+      <%= link_to "Rate Vehicle", new_rating_path(rateable_type: 'Vehicle', rateable_id: booking.vehicle_id) %>
+    <% end %>
+    
+  </div>
+<% end %>

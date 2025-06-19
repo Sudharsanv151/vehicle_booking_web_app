@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-  def select_role; end
+  def select_role
+  end
 
   def new
     @role = params[:role]
@@ -24,16 +25,5 @@ class UsersController < ApplicationController
 
   def home
     @user = User.find(session[:user_id])
-    if @user.userable_type == "Customer"
-      @vehicles = Vehicle.includes(:tags, :driver)
-      @bookings = @user.bookings.includes(:vehicle, :payment)
-    else
-      @vehicles = @user.userable.vehicles
-      @requests = Booking.joins(:vehicle).where(vehicles: { driver_id: @user.userable.id }, status: false)
-
-      # @requests = Booking.joins(:vehicle).where(vehicles: { driver_id: @user.userable.id }, status: false)
-      @approved = Booking.joins(:vehicle).where(vehicles: { driver_id: @user.userable.id }, status: true)
-
-    end
   end
 end

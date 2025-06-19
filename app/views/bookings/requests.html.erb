@@ -1,0 +1,4 @@
+<h2>Pending Booking Requests</h2>
+<% @requests.each do |booking| %>
+  <p><%= booking.vehicle.model %> for <%= booking.user.name %> — <%= button_to "Accept", accept_booking_path(booking), method: :patch %></p>
+<% end %>

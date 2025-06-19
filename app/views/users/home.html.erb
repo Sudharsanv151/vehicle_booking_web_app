@@ -1,112 +1,12 @@
 <h1>Welcome, <%= @user.name %>!</h1>
 
 <% if @user.userable_type == "Customer" %>
-  <h2>Available Vehicles</h2>
-  <% @vehicles.each do |vehicle| %>
-      <strong><%= vehicle.model %></strong><br>
-      Driver: <%= vehicle.driver&.user&.name %><br>
-      Tags: <%= vehicle.tags.map(&:name).join(', ') %><br>
-      Type: <%= vehicle.vehicle_type %> <br>
-      Capacity: <%= vehicle.capacity %> <br>
-      License: <%= vehicle.licence_plate %><br>
-      <%= link_to "Book Now", new_booking_path(vehicle_id: vehicle.id) %>
-          <% if vehicle.ratings.any? %>
-      <p><strong>Ratings:</strong></p>
-      <% vehicle.ratings.each do |rating| %>
-        <p><%= rating.stars %> - <%= rating.comments %></p>
-      <% end %>
-    <% else %>
-      <p><em>No ratings yet</em></p>
-    <% end %>
-  <% end %>
-
-  <h2>Your Bookings</h2>
-  <% @bookings.each do |booking| %>
-    <div>
-      Vehicle: <%= booking.vehicle.model %> <br>
-      Status: <%= booking.status ? "Approved" :"Pending" %><br>
-      <% if !booking.status %>
-        <%= button_to "Cancel Booking", booking_path(booking), method: :delete, data: { confirm: "Are you sure you want to cancel this booking?" } %>
-      <% end %>
-      <% if booking.status && !booking.payment&.payment_status %>
-        <%= link_to "Make Payment", new_payment_path(booking_id: booking.id) %>
-      <% elsif booking.payment&.payment_status && !booking.ride_status %>
-        <em>Ride in progress...</em>
-      <% elsif booking.ride_status %>
-  <% ride_rating = booking.ratings.find_by(user_id: @user.id) %>
-  <% vehicle_rating = booking.vehicle.ratings.find_by(user_id: @user.id) %>
-
-  <% if ride_rating %>
-    <p>Ride Rating: <%= ride_rating.stars %> - <%= ride_rating.comments %></p>
-  <% else %>
-    <%= link_to "Rate Ride", new_rating_path(rateable_type: 'Booking', rateable_id: booking.id) %><br>
-  <% end %>
-
-  <% if vehicle_rating %>
-    <p>Vehicle Rating: <%= vehicle_rating.stars %> - <%= vehicle_rating.comments %></p>
-  <% else %>
-    <%= link_to "Rate Vehicle", new_rating_path(rateable_type: 'Vehicle', rateable_id: booking.vehicle_id) %>
-  <% end %>
-<% end %>
-
-    </div>
-  <% end %>
+  <%= link_to "Book a Trip", vehicles_path %><br>
+  <%= link_to "My Bookings", bookings_path %><br>
+  <%= link_to "See Rides History", customer_ride_history_path %><br>
 <% else %>
-  <h2>Your Vehicles</h2>
-  <%= link_to "Add Vehicle", new_vehicle_path %><br> <br>
-  <% @vehicles.each do |vehicle| %>
-    <div>
-      <%= vehicle.model %> - <%= vehicle.vehicle_type %> | <%= link_to "Edit", edit_vehicle_path(vehicle) %>
-      <%= button_to "Delete", vehicle_path(vehicle), method: :delete, data: { confirm: "Are you sure?" } %>
-
-    </div>
-      <div style="margin-left: 10px;">
-    <% if vehicle.ratings.any? %>
-      <p><strong>Customer Ratings:</strong></p>
-      <% vehicle.ratings.each do |rating| %>
-        <p><%= %></p>
-        <p><%= rating.stars %> - <%= rating.comments %></p>
-      <% end %>
-    <% else %>
-      <p><em>No ratings for this vehicle yet.</em></p>
-    <% end %>
-  </div>
-
-  <% end %>
-
-  <h2>Booking Requests</h2>
-  <% @requests.each do |booking| %>
-    <div>
-      Vehicle: <%= booking.vehicle.model %><br>
-      Customer: <%= booking.user.name %><br>
-      From location: <%= booking.start_location %><br>
-      To location: <%= booking.end_location%> <br>
-      Price: <%= booking.price%> <br>
-      <%# <%= link_to "Accept", accept_booking_path(booking), method: :patch %>
-      <%= button_to "Accept", accept_booking_path(booking), method: :patch %>
-
-    </div>
-  <% end %>
-
-  <h2>Approved Bookings</h2>
-<% @approved.each do |booking| %>
-  <div>
-    Vehicle: <%= booking.vehicle.model %><br>
-    Payment: <%= booking.payment&.payment_status ? "Paid" : "Not Paid" %>
-
-    <% if booking.payment&.payment_status && !booking.ride_status %>
-      <%= button_to "Finish Ride", finish_booking_path(booking), method: :patch %>
-    <% end %>
-    <% if booking.ride_status %>
-      <% ride_rating = booking.ratings.find_by(user_id: booking.user_id) %>
-      <% if ride_rating %>
-        <p>Ride Rating: <%= ride_rating.stars %> - <%= ride_rating.comments %></p>
-      <% else %>
-        <p><em>Ride completed. Awaiting rating.</em></p>
-      <% end %>
-    <% end %>
-    <br>
-  </div>
-<% end %>
-
+  <%= link_to "Manage Vehicles", driver_vehicles_path %><br>
+  <%= link_to "Booking Requests", booking_requests_path %><br>
+  <%= link_to "Ongoing Rides", driver_ongoing_path %><br>
+  <%= link_to "Ride History", driver_ride_history_path %><br>
 <% end %>

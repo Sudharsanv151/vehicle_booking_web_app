@@ -1,7 +1,5 @@
 class RatingsController < ApplicationController
   def new
-    @rateable_type = params[:rateable_type]
-    @rateable_id = params[:rateable_id]
     @rating = Rating.new
   end
 
@@ -9,11 +7,12 @@ class RatingsController < ApplicationController
     @rating = Rating.new(rating_params)
     @rating.user_id = session[:user_id]
 
-    if @rating.save
+    if Rating.exists?(user_id: @rating.user_id, rateable_type: @rating.rateable_type, rateable_id: @rating.rateable_id)
+      redirect_to home_path, alert: "You have already rated this."
+    elsif @rating.save
       Reward.create(user_id: @rating.user_id, points: 10, reward_type: "Rating Bonus")
-      redirect_to home_path, notice: "Thank you for your feedback!"
+      redirect_to home_path, notice: "Thanks for rating!"
     else
-      flash.now[:alert] = "Rating failed. Please try again."
       render :new, status: :unprocessable_entity
     end
   end
@@ -21,6 +20,6 @@ class RatingsController < ApplicationController
   private
 
   def rating_params
-    params.require(:rating).permit(:stars, :comments, :rateable_type, :rateable_id)
+    params.require(:rating).permit(:rateable_type, :rateable_id, :stars, :comments)
   end
 end

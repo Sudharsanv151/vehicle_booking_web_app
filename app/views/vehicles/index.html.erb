@@ -1,0 +1,9 @@
+<h2>Available Vehicles</h2>
+
+<% @vehicles.each do |vehicle| %>
+  <div>
+    <p><strong><%= vehicle.model %></strong> - <%= vehicle.vehicle_type %> (Capacity: <%= vehicle.capacity %>)</p>
+
+    <%= link_to "Book Now",new_booking_path(vehicle_id: vehicle.id) %>
+  </div>
+<% end %>

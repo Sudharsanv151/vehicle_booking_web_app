@@ -1,0 +1,5 @@
+<h2>Vehicle Ratings</h2>
+
+<% @ratings.each do |rating| %>
+  <p><strong><%= rating.user.name %></strong>: ⭐ <%= rating.stars %> - <%=rating.comments %></p>
+<% end %>

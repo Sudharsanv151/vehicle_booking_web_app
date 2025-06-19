@@ -1,0 +1,16 @@
+<h1>Ride History for Vehicle: <%= @vehicle.model %></h1>
+
+<% if @bookings.any? %>
+  <% @bookings.each do |booking| %>
+    <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+      <p><strong>From:</strong> <%= booking.start_location %></p>
+      <p><strong>To:</strong> <%= booking.end_location %></p>
+      <p><strong>Customer:</strong> <%= booking.user.name %></p>
+      <p><strong>Price:</strong> ₹<%= booking.price %></p>
+      <p><strong>Date:</strong> <%= booking.booking_date.strftime('%d-%b-%Y %I:%M %p') %></p>
+    </div>
+  <% end %>
+<% else %>
+  <p>No completed rides for this vehicle.</p>
+  
+<% end %>

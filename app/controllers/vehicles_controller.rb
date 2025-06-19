@@ -1,30 +1,21 @@
 class VehiclesController < ApplicationController
+  def index
+    @vehicles = Vehicle.includes(:tags, :driver)
+  end
+
   def new
     @vehicle = Vehicle.new
   end
 
   def create
-    driver = User.find(session[:user_id]).userable
-    @vehicle = driver.vehicles.new(vehicle_params)
+    @vehicle = Vehicle.new(vehicle_params)
+    @vehicle.driver_id = User.find(session[:user_id]).userable.id
     if @vehicle.save
-      redirect_to home_path
+      redirect_to driver_vehicles_path
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
-
-  def destroy
-    @vehicle = Vehicle.find(params[:id])
-    if @vehicle.bookings.exists?
-      redirect_to home_path, alert: "Cannot delete vehicle with existing bookings"
-    elsif @vehicle.driver_id == User.find(session[:user_id]).userable.id
-      @vehicle.destroy
-      redirect_to home_path, notice: "Vehicle deleted"
-    else
-      redirect_to home_path, alert: "Not authorized"
-    end
-  end
-
 
   def edit
     @vehicle = Vehicle.find(params[:id])
@@ -33,15 +24,43 @@ class VehiclesController < ApplicationController
   def update
     @vehicle = Vehicle.find(params[:id])
     if @vehicle.update(vehicle_params)
-      redirect_to home_path
+      redirect_to driver_vehicles_path
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    vehicle = Vehicle.find(params[:id])
+
+    if vehicle.bookings.where(ride_status: [false, nil]).exists?
+      redirect_to driver_vehicles_path, alert: "Cannot delete vehicle with active or pending bookings"
+    else
+      vehicle.bookings.where(ride_status: true).destroy_all
+      vehicle.destroy
+      redirect_to driver_vehicles_path, notice: "Vehicle and completed bookings deleted"
+    end
+  end
+
+
+
+  def driver_index
+    @vehicles = User.find(session[:user_id]).userable.vehicles
+  end
+
+  def ratings
+    @vehicle = Vehicle.find(params[:vehicle_id])
+    @ratings = @vehicle.ratings.includes(:user)
+  end
+
+  def ride_history
+    @vehicle = Vehicle.find(params[:vehicle_id])
+    @bookings = @vehicle.bookings.where(ride_status: true)
   end
 
   private
 
   def vehicle_params
-    params.require(:vehicle).permit(:vehicle_type, :model, :licence_plate, :capacity, tag_ids: [])
+    params.require(:vehicle).permit(:model, :vehicle_type, :capacity, :licence_plate)
   end
 end

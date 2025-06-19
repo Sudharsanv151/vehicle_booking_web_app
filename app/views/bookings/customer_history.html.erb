@@ -1,0 +1,34 @@
+<h1>Your Ride History</h1>
+
+<% if @completed.any? %>
+  <% @completed.each do |booking| %>
+    <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+
+      <p><strong>Vehicle:</strong> <%= booking.vehicle.model %></p>
+      <p><strong>From:</strong> <%= booking.start_location %></p>
+      <p><strong>To:</strong> <%= booking.end_location %></p>
+      <p><strong>Price:</strong> ₹<%= booking.price %></p>
+      <p><strong>Date:</strong> <%= booking.booking_date.strftime('%d-%b-%Y %I:%M %p') %></p>
+      <p><strong>Payment:</strong> Paid via <%= booking.payment.payment_type %></p>
+
+
+      <% ride_rating = booking.ratings.find_by(user_id: @user.id) %>
+      <% if ride_rating %>
+        <p><strong>Ride Rating:</strong> ⭐ <%= ride_rating.stars %> - <%= ride_rating.comments %></p>
+      <% else %>
+        <p><%= link_to "Rate Ride", new_rating_path(rateable_type: 'Booking', rateable_id: booking.id) %></p>
+      <% end %>
+
+      <% vehicle_rating = booking.vehicle.ratings.find_by(user_id: @user.id) %>
+      <% if vehicle_rating %>
+        <p><strong>Vehicle Rating:</strong> ⭐ <%= vehicle_rating.stars %> - <%= vehicle_rating.comments %></p>
+      <% else %>
+        <p><%= link_to "Rate Vehicle", new_rating_path(rateable_type: 'Vehicle', rateable_id: booking.vehicle_id) %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+<% else %>
+  <p>You have no completed rides...</p>
+  
+<% end %>

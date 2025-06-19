@@ -1,0 +1,15 @@
+<h2>Completed Rides</h2>
+
+<% @completed.each do |booking| %>
+  <div>
+
+    <p><%= booking.vehicle.model %>: <%= booking.start_location %> → <%= booking.end_location %></p>
+
+    <% rating = booking.ratings.find_by(user_id: @user.id) %>
+    
+    <% if rating %>
+      <p>⭐ <%= rating.stars %>: <%= rating.comments %></p>
+    <% end %>
+
+  </div>
+<% end %>

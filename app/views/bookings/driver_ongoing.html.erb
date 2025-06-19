@@ -1,0 +1,24 @@
+<h1>Ongoing Rides</h1>
+
+<% if @ongoing_bookings.any? %>
+  <% @ongoing_bookings.each do |booking| %>
+    <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+
+      <p><strong>Vehicle:</strong> <%= booking.vehicle.model %></p>
+      <p><strong>Customer:</strong> <%= booking.user.name %></p>
+      <p><strong>From:</strong> <%= booking.start_location %></p>
+      <p><strong>To:</strong> <%= booking.end_location %></p>
+      <p><strong>Price:</strong> ₹<%= booking.price %></p>
+
+      <% if booking.payment&.payment_status %>
+        <%= button_to "Finish Ride", finish_booking_path(booking), method: :patch %>
+      <% else %>
+        <p><em>Waiting for customer payment...</em></p>
+      <% end %>
+
+    </div>
+  <% end %>
+  
+<% else %>
+  <p>No ongoing rides at the moment.</p>
+<% end %>

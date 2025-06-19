@@ -1,0 +1,12 @@
+<h2>Manage My Vehicles</h2>
+<%= link_to "Add a Vehicle", new_vehicle_path %>
+<% @vehicles.each do |vehicle| %>
+  <div>
+    <p><strong><%= vehicle.model %></strong></p>
+    
+    <%= link_to "Edit Vehicle", edit_vehicle_path(vehicle) %>
+    <%= button_to "Delete Vehicle", vehicle_path(vehicle), method: :delete, data: { confirm: "Are you sure?" } %><br>
+    <%= link_to "View Ratings", vehicle_ratings_path(vehicle) %><br>
+    <%= link_to "View Ride History", vehicle_bookings_path(vehicle) %>
+  </div>
+<% end %>

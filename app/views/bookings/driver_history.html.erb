@@ -1,0 +1,9 @@
+<h2>Completed Rides</h2>
+
+<% @bookings.each do |booking| %>
+  <div>
+
+    <p><%= booking.vehicle.model %>: <%= booking.start_location %> → <%= booking.end_location %></p>
+
+  </div>
+<% end %>

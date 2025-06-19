@@ -1,11 +1,7 @@
 class PaymentsController < ApplicationController
   def new
     @booking = Booking.find_by(id: params[:booking_id])
-    if @booking.nil?
-      redirect_to home_path, alert: "Booking not found"
-    else
-      @payment = Payment.new
-    end
+    @payment = Payment.new
   end
 
   def create
@@ -15,9 +11,7 @@ class PaymentsController < ApplicationController
     if @payment.save
       redirect_to new_rating_path(rateable_type: "Booking", rateable_id: @payment.booking_id)
     else
-      # re-load the booking for the view if it fails
       @booking = Booking.find_by(id: @payment.booking_id)
-      flash.now[:alert] = "Payment failed. Please try again."
       render :new, status: :unprocessable_entity
     end
   end

@@ -1,22 +1,33 @@
-<nav>
+<nav style="background: #222; padding: 12px; color: white;">
   <div style="display: flex; justify-content: space-between; align-items: center;">
+
     <div>
-      <%= link_to "RideBooker", home_path %>
+      <%= link_to "RideBooker", home_path, style: "color: white; font-weight: bold; text-decoration: none;" %>
     </div>
 
     <div>
       <% if session[:user_id] %>
+
         <% user = User.find(session[:user_id]) %>
+
         <% if user.userable_type == "Customer" %>
-          <%= link_to "Browse Vehicles", home_path%> 
-          <%= link_to "My Bookings", home_path %>
+          <%= link_to "Book a Trip", vehicles_path, style: "color: white; margin-right: 15px;" %>
+          <%= link_to "My Bookings", bookings_path, style: "color: white; margin-right: 15px;" %>
+          <%= link_to "Ride History", customer_ride_history_path, style: "color: white; margin-right: 15px;" %>
+
         <% else %>
-          <%= link_to "My Vehicles", home_path %>
-          <%= link_to "Booking Requests", home_path %>
+          <%= link_to "Manage Vehicles", driver_vehicles_path, style: "color: white; margin-right: 15px;" %>
+          <%= link_to "Booking Requests", booking_requests_path, style: "color: white; margin-right: 15px;" %>
+          <%= link_to "Ride History", driver_ride_history_path, style: "color: white; margin-right: 15px;" %>
+
         <% end %>
-        <%= link_to "Logout", select_role_path, method: :get %>
+
+        <%= link_to "Logout", select_role_path, method: :get, style: "color: red;" %>
+
       <% else %>
-        <%= link_to "Login / Sign Up", select_role_path %>
+
+        <%= link_to "Login / Sign Up", select_role_path, style: "color: white;" %>
+        
       <% end %>
     </div>
   </div>
