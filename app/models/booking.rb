@@ -14,6 +14,8 @@ class Booking < ApplicationRecord
   scope :pending, ->{where(status:false)}
   scope :approved, ->{where(status:true)}
   scope :finished, ->{where(ride_status:true)}
+  scope :not_finished, ->{where(ride_status:false)}
+  
 
 
 end

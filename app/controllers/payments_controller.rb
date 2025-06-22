@@ -9,7 +9,7 @@ class PaymentsController < ApplicationController
     @payment.payment_status = true
 
     if @payment.save
-      redirect_to new_rating_path(rateable_type: "Booking", rateable_id: @payment.booking_id)
+      redirect_to bookings_path, notice: "Payment success!!"
     else
       @booking = Booking.find_by(id: @payment.booking_id)
       render :new, status: :unprocessable_entity
