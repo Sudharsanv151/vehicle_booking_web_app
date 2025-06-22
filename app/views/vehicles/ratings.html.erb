@@ -1,5 +1,21 @@
-<h2>Vehicle Ratings</h2>
+<div class="container mx-auto px-4 py-8">
+  <h2 class="text-3xl font-bold text-gray-800 mb-6">Vehicle Ratings</h2>
 
-<% @ratings.each do |rating| %>
-  <p><strong><%= rating.user.name %></strong>: ⭐ <%= rating.stars %> - <%=rating.comments %></p>
-<% end %>
+  <% if @ratings.blank? %>
+    <div class="text-center p-6 bg-white rounded-lg shadow-md border border-gray-200">
+      <p class="text-gray-700 text-lg mb-4">Your vehicle has not received any ratings yet.</p>
+      <%= link_to "Go to Home", home_path, class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-md shadow-md no-underline transition-colors duration-200" %>
+    </div>
+  <% else %>
+    <div class="space-y-4"> 
+      <% @ratings.each do |rating| %>
+        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+          <p class="text-gray-700">
+            <strong class="font-semibold text-gray-800"><%= rating.user.name %></strong>:
+            <span class="text-yellow-500">⭐ <%= rating.stars %></span> - <%= rating.comments %>
+          </p>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

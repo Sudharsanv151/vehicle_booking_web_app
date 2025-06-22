@@ -1,32 +1,32 @@
-<nav style="background: #222; padding: 12px; color: white;">
-  <div style="display: flex; justify-content: space-between; align-items: center;">
+<nav class="bg-gray-800 p-4 text-white shadow-lg">
+  <div class="container mx-auto flex items-center justify-between">
 
     <div>
-      <%= link_to "RideBooker", home_path, style: "color: white; font-weight: bold; text-decoration: none;" %>
+      <%= link_to "RideBooker", home_path, class: "text-white text-xl font-bold no-underline" %>
     </div>
 
-    <div>
+    <div class="flex flex-wrap items-center space-x-6"> <%# Changed from space-x-4 md:space-x-6 to just space-x-6 %>
       <% if session[:user_id] %>
-
         <% user = User.find(session[:user_id]) %>
 
         <% if user.userable_type == "Customer" %>
-          <%= link_to "Book a Trip", vehicles_path, style: "color: white; margin-right: 15px;" %>
-          <%= link_to "My Bookings", bookings_path, style: "color: white; margin-right: 15px;" %>
-          <%= link_to "Ride History", customer_ride_history_path, style: "color: white; margin-right: 15px;" %>
+          <%= link_to "Book a Trip", vehicles_path, class: "text-white no-underline text-base" %> <%# Changed from text-sm md:text-base to just text-base %>
+          <%= link_to "My Bookings", bookings_path, class: "text-white no-underline text-base" %>
+          <%= link_to "Ride History", customer_ride_history_path, class: "text-white no-underline text-base" %>
 
         <% else %>
-          <%= link_to "Manage Vehicles", driver_vehicles_path, style: "color: white; margin-right: 15px;" %>
-          <%= link_to "Booking Requests", booking_requests_path, style: "color: white; margin-right: 15px;" %>
-          <%= link_to "Ride History", driver_ride_history_path, style: "color: white; margin-right: 15px;" %>
+          <%= link_to "Manage Vehicles", driver_vehicles_path, class: "text-white no-underline text-base" %>
+          <%= link_to "Booking Requests", booking_requests_path, class: "text-white no-underline text-base" %>
+          <%= link_to "Ongoing Rides", driver_ongoing_path, class: "text-white no-underline text-base" %>
+          <%= link_to "Ride History", driver_ride_history_path, class: "text-white no-underline text-base" %>
 
         <% end %>
 
-        <%= link_to "Logout", select_role_path, method: :get, style: "color: red;" %>
+        <%= link_to "Logout", select_role_path, method: :get, class: "bg-red-600 hover:bg-red-700 text-white font-semibold py-1.5 px-3 rounded text-base no-underline transition-colors duration-200" %> <%# Changed from text-sm md:text-base to just text-base %>
 
       <% else %>
 
-        <%= link_to "Login / Sign Up", select_role_path, style: "color: white;" %>
+        <%= link_to "Login / Sign Up", select_role_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded text-base no-underline transition-colors duration-200" %> <%# Changed from text-sm md:text-base to just text-base %>
         
       <% end %>
     </div>

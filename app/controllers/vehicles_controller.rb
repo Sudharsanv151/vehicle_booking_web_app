@@ -7,6 +7,10 @@ class VehiclesController < ApplicationController
     @vehicle = Vehicle.new
   end
 
+  # def show
+  #   redirect_to   
+  # end
+
   def create
     @vehicle = Vehicle.new(vehicle_params)
     @vehicle.driver_id = User.find(session[:user_id]).userable.id
@@ -33,10 +37,10 @@ class VehiclesController < ApplicationController
   def destroy
     vehicle = Vehicle.find(params[:id])
 
-    if vehicle.bookings.where(ride_status: [false, nil]).exists?
+    if vehicle.bookings.not_finished.exists?
       redirect_to driver_vehicles_path, alert: "Cannot delete vehicle with active or pending bookings"
     else
-      vehicle.bookings.where(ride_status: true).destroy_all
+      vehicle.bookings.finished.destroy_all
       vehicle.destroy
       redirect_to driver_vehicles_path, notice: "Vehicle and completed bookings deleted"
     end

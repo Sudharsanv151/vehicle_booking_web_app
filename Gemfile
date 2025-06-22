@@ -6,6 +6,8 @@ gem "rails", "~> 7.1.5", ">= 7.1.5.1"
 
 gem "sprockets-rails"
 
+gem 'tailwindcss-rails'
+
 gem "pg", "~> 1.1"
 
 gem "puma", ">= 5.0"

@@ -1,39 +1,55 @@
-<h2>Requested Rides</h2>
-<% @requested.each do |booking| %>
-  <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
 
-    <p><%= booking.vehicle.model %> from <%= booking.start_location %> to <%= booking.end_location %></p>
-
-  </div>
+<h2 class="text-2xl font-bold mb-4 mt-8 text-gray-800">Requested Rides</h2>
+<% if @requested.blank? %>
+  <p class="text-gray-700 mb-4">You don't have any requested rides...</p>
+  <%= link_to "Book a ride", vehicles_path, class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded no-underline" %>
+<%else%>
+  <% @requested.each do |booking| %>
+    <div class="border border-gray-300 p-4 my-3 rounded-lg shadow-sm bg-white">
+      <p class="text-gray-700 mb-2">
+        <strong class="text-gray-800"><%= booking.vehicle.model %></strong> from
+        <span class="font-medium"><%= booking.start_location %></span> to
+        <span class="font-medium"><%= booking.end_location %></span> on
+        <span class="font-medium"><%= booking.booking_date.strftime("%B %d, %Y") %></span>
+      </p>
+      <p class="text-gray-700">
+        <strong class="text-gray-800">Driver name:</strong> <span class="font-medium"><%= booking.driver.user.name%></span>
+      </p>
+    </div>
+  <%end%>
 <% end %>
 
-<h2>Ongoing Rides</h2>
+<h2 class="text-2xl font-bold mb-4 mt-10 text-gray-800">Ongoing Rides</h2>
+<% if @ongoing.blank? %>
+  <p class="text-gray-700 mb-4">You don't have any ongoing rides...</p>
+  <%= link_to "Book a ride", vehicles_path, class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded no-underline" %>
+<%else%>
+  <% @ongoing.each do |booking| %>
+    <div class="border border-gray-300 p-4 my-3 rounded-lg shadow-sm bg-white">
+      <p class="mb-1"><strong class="font-semibold text-gray-800">Vehicle:</strong> <span class="text-gray-700"><%= booking.vehicle.model %></span></p>
+      <p class="mb-1"><strong class="font-semibold text-gray-800">From:</strong> <span class="text-gray-700"><%= booking.start_location %></span></p>
+      <p class="mb-1"><strong class="font-semibold text-gray-800">To:</strong> <span class="text-gray-700"><%= booking.end_location %></span></p>
+      <p class="mb-1"><strong class="font-semibold text-gray-800">Price:</strong> <span class="text-gray-700">₹<%= booking.price %></span></p>
 
-<% @ongoing.each do |booking| %>
-  <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+      <% if booking.payment.blank? %>
+        <div class="mt-4">
+          <%= link_to "Make Payment", new_payment_path(booking_id: booking.id), class: "inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-1.5 px-3 rounded no-underline text-sm" %>
+        </div>
+      <% else %>
+        <p class="mt-2"><strong class="font-semibold text-gray-800">Payment:</strong> <span class="text-gray-700">Paid via <%= booking.payment.payment_type %></span></p>
+      <% end %>
 
-    <p><strong>Vehicle:</strong> <%= booking.vehicle.model %></p>
-    <p><strong>From:</strong> <%= booking.start_location %></p>
-    <p><strong>To:</strong> <%= booking.end_location %></p>
-    <p><strong>Price:</strong> ₹<%= booking.price %></p>
+      <% ride_rating = booking.ratings.find_by(user_id: booking.user_id) %>
+      <% vehicle_rating = booking.vehicle.ratings.find_by(user_id: booking.user_id) %>
 
-    <% if booking.payment.blank? %>
-      <p><%= link_to "Make Payment", new_payment_path(booking_id: booking.id) %></p>
-    <% else %>
-      <p><strong>Payment:</strong> Paid via <%= booking.payment.payment_type %></p>
-    <% end %>
-
-    <% ride_rating = booking.ratings.find_by(user_id: booking.user_id) %>
-
-    <% if ride_rating.nil? %>
-      <%= link_to "Rate Ride", new_rating_path(rateable_type: 'Booking', rateable_id: booking.id) %>
-    <% end %>
-
-    <% vehicle_rating = booking.vehicle.ratings.find_by(user_id: booking.user_id) %>
-
-    <% if vehicle_rating.nil? %>
-      <%= link_to "Rate Vehicle", new_rating_path(rateable_type: 'Vehicle', rateable_id: booking.vehicle_id) %>
-    <% end %>
-    
-  </div>
+      <div class="mt-4 flex flex-col space-y-2"> <%# Using flex-col and space-y for vertical buttons %>
+        <% if ride_rating.nil? %>
+          <%= link_to "Rate Ride", new_rating_path(rateable_type: 'Booking', rateable_id: booking.id), class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded no-underline text-sm w-fit" %>
+        <% end %>
+        <% if vehicle_rating.nil? %>
+          <%= link_to "Rate Vehicle", new_rating_path(rateable_type: 'Vehicle', rateable_id: booking.vehicle_id), class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded no-underline text-sm w-fit" %>
+        <% end %>
+      </div>
+    </div>
+  <%end%>
 <% end %>

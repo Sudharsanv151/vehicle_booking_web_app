@@ -1,12 +1,18 @@
-<h1>Welcome, <%= @user.name %>!</h1>
+<div class="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
+  <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">
+    Welcome, <span class="text-blue-600"><%= @user.name %></span>!
+  </h1>
 
-<% if @user.userable_type == "Customer" %>
-  <%= link_to "Book a Trip", vehicles_path %><br>
-  <%= link_to "My Bookings", bookings_path %><br>
-  <%= link_to "See Rides History", customer_ride_history_path %><br>
-<% else %>
-  <%= link_to "Manage Vehicles", driver_vehicles_path %><br>
-  <%= link_to "Booking Requests", booking_requests_path %><br>
-  <%= link_to "Ongoing Rides", driver_ongoing_path %><br>
-  <%= link_to "Ride History", driver_ride_history_path %><br>
-<% end %>
+  <div class="flex flex-col space-y-4 w-full max-w-sm">
+    <% if @user.userable_type == "Customer" %>
+      <%= link_to "Book a Trip", vehicles_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md text-lg text-center no-underline transition-colors duration-200" %>
+      <%= link_to "My Bookings", bookings_path, class: "bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-lg shadow-md text-lg text-center no-underline transition-colors duration-200" %>
+      <%= link_to "See Rides History", customer_ride_history_path, class: "bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md text-lg text-center no-underline transition-colors duration-200" %>
+    <% else %>
+      <%= link_to "Manage Vehicles", driver_vehicles_path, class: "bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md text-lg text-center no-underline transition-colors duration-200" %>
+      <%= link_to "Booking Requests", booking_requests_path, class: "bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-lg shadow-md text-lg text-center no-underline transition-colors duration-200" %>
+      <%= link_to "Ongoing Rides", driver_ongoing_path, class: "bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md text-lg text-center no-underline transition-colors duration-200" %>
+      <%= link_to "Ride History", driver_ride_history_path, class: "bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md text-lg text-center no-underline transition-colors duration-200" %>
+    <% end %>
+  </div>
+</div>

@@ -38,6 +38,15 @@ class BookingsController < ApplicationController
     redirect_to booking_requests_path
   end
 
+
+  def reject
+    booking= Booking.find(params[:id])
+    booking.destroy
+    redirect_to booking_requests_path, notice:"Rejected the booking request"
+  end
+
+
+
   def finish
     booking = Booking.find(params[:id])
     booking.update(ride_status: true)
@@ -67,6 +76,6 @@ class BookingsController < ApplicationController
   private
 
   def booking_params
-    params.require(:booking).permit(:vehicle_id, :start_location, :end_location, :price)
+    params.require(:booking).permit(:vehicle_id, :start_location, :end_location, :start_time, :price)
   end
 end
