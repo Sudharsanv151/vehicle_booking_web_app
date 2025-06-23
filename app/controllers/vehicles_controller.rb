@@ -15,8 +15,10 @@ class VehiclesController < ApplicationController
     @vehicle = Vehicle.new(vehicle_params)
     @vehicle.driver_id = User.find(session[:user_id]).userable.id
     if @vehicle.save
+      flash[:notice]="Vehicle added successfully!"
       redirect_to driver_vehicles_path
     else
+      flash[:alert]="Failed to add vehicle"
       render :new, status: :unprocessable_entity
     end
   end
@@ -28,6 +30,7 @@ class VehiclesController < ApplicationController
   def update
     @vehicle = Vehicle.find(params[:id])
     if @vehicle.update(vehicle_params)
+      flash[:notice]="Updated the vehicle details successfully!"
       redirect_to driver_vehicles_path
     else
       render :edit, status: :unprocessable_entity
@@ -65,6 +68,6 @@ class VehiclesController < ApplicationController
   private
 
   def vehicle_params
-    params.require(:vehicle).permit(:model, :vehicle_type, :capacity, :licence_plate)
+    params.require(:vehicle).permit(:model, :vehicle_type, :capacity, :licence_plate, :image, tag_ids:[])
   end
 end

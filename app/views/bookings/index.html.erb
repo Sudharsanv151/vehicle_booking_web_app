@@ -1,29 +1,36 @@
+<div class="container m-10">
+  <h2 class="text-2xl font-bold mb-4 mt-8 text-gray-800">Requested Rides</h2>
 
-<h2 class="text-2xl font-bold mb-4 mt-8 text-gray-800">Requested Rides</h2>
 <% if @requested.blank? %>
   <p class="text-gray-700 mb-4">You don't have any requested rides...</p>
   <%= link_to "Book a ride", vehicles_path, class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded no-underline" %>
-<%else%>
+<% else %>
   <% @requested.each do |booking| %>
     <div class="border border-gray-300 p-4 my-3 rounded-lg shadow-sm bg-white">
       <p class="text-gray-700 mb-2">
         <strong class="text-gray-800"><%= booking.vehicle.model %></strong> from
         <span class="font-medium"><%= booking.start_location %></span> to
         <span class="font-medium"><%= booking.end_location %></span> on
-        <span class="font-medium"><%= booking.booking_date.strftime("%B %d, %Y") %></span>
+        <span class="font-medium"><%= booking.booking_date.strftime("%B %d, %Y at %I:%M %p") %></span>
       </p>
       <p class="text-gray-700">
-        <strong class="text-gray-800">Driver name:</strong> <span class="font-medium"><%= booking.driver.user.name%></span>
+        <strong class="text-gray-800">Driver name:</strong> <span class="font-medium"><%= booking.driver.user.name %></span>
       </p>
+      <div class="mt-3">
+        <%= button_to "Cancel", booking_path(booking), method: :delete,
+            data: { confirm: "Are you sure you want to cancel this ride?" },
+            class: "bg-red-600 hover:bg-gray-400 text-white font-semibold py-2 px-3 rounded text-sm" %>
+      </div>
     </div>
-  <%end%>
+  <% end %>
 <% end %>
 
 <h2 class="text-2xl font-bold mb-4 mt-10 text-gray-800">Ongoing Rides</h2>
+
 <% if @ongoing.blank? %>
   <p class="text-gray-700 mb-4">You don't have any ongoing rides...</p>
   <%= link_to "Book a ride", vehicles_path, class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded no-underline" %>
-<%else%>
+<% else %>
   <% @ongoing.each do |booking| %>
     <div class="border border-gray-300 p-4 my-3 rounded-lg shadow-sm bg-white">
       <p class="mb-1"><strong class="font-semibold text-gray-800">Vehicle:</strong> <span class="text-gray-700"><%= booking.vehicle.model %></span></p>
@@ -37,19 +44,26 @@
         </div>
       <% else %>
         <p class="mt-2"><strong class="font-semibold text-gray-800">Payment:</strong> <span class="text-gray-700">Paid via <%= booking.payment.payment_type %></span></p>
+        <p class="mt-2 text-green-700">Waiting for the driver to finish the ride...</p>
+
+        <% ride_rating = booking.ratings.find_by(user_id: booking.user_id, rateable_type: "Booking", rateable_id: booking.id) %>
+        <% vehicle_rating = booking.vehicle.ratings.find_by(user_id: booking.user_id, rateable_type: "Vehicle", rateable_id: booking.vehicle_id) %>
+
+        <div class="mt-4 flex flex-col space-y-2">
+          <% if ride_rating.nil? %>
+            <%= link_to "Rate Ride", new_rating_path(rateable_type: 'Booking', rateable_id: booking.id), class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded no-underline text-sm w-fit" %>
+          <%else%>
+            <p class="mb-1"><strong class="font-semibold text-gray-800">Ride ratings:</strong> <span class="text-gray-700"><%= ride_rating.stars%>⭐ - <%= ride_rating.comments.humanize%></span></p>
+          <% end %>
+
+          <% if vehicle_rating.nil? %>
+            <%= link_to "Rate Vehicle", new_rating_path(rateable_type: 'Vehicle', rateable_id: booking.vehicle_id), class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded no-underline text-sm w-fit" %>
+          <%else%>
+            <p class="mb-1"><strong class="font-semibold text-gray-800">Vehicle ratings:</strong> <span class="text-gray-700"><%= vehicle_rating.stars%>⭐ - <%= vehicle_rating.comments.humanize%></span></p>
+          <% end %> 
+        </div>
       <% end %>
-
-      <% ride_rating = booking.ratings.find_by(user_id: booking.user_id) %>
-      <% vehicle_rating = booking.vehicle.ratings.find_by(user_id: booking.user_id) %>
-
-      <div class="mt-4 flex flex-col space-y-2"> <%# Using flex-col and space-y for vertical buttons %>
-        <% if ride_rating.nil? %>
-          <%= link_to "Rate Ride", new_rating_path(rateable_type: 'Booking', rateable_id: booking.id), class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded no-underline text-sm w-fit" %>
-        <% end %>
-        <% if vehicle_rating.nil? %>
-          <%= link_to "Rate Vehicle", new_rating_path(rateable_type: 'Vehicle', rateable_id: booking.vehicle_id), class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded no-underline text-sm w-fit" %>
-        <% end %>
-      </div>
     </div>
-  <%end%>
+  <% end %>
 <% end %>
+</div>

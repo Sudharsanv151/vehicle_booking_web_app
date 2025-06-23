@@ -3,46 +3,27 @@
   <head>
     <title>VehicleBookingWebApp</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "application", media: "all" %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
 
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%# <link rel="stylesheet" href="https://cdn.simplecss.org/simple.css"> %>
-
-    <%# <link rel="stylesheet" href="https://classless.de/classless.css"> %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css", media: "all" %>
-    <%= javascript_include_tag "https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js", "data-turbo-track": "reload" %>
-
-
+    <%= stylesheet_link_tag "tailwind", "application", media: "all", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    
-
+  <body class="bg-gray-50 min-h-screen">
     <%= render "shared/navbar" %>
-    
+    <%= render "shared/flash" %>
+
     <%= yield %>
+
     <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    toastr.options = {
-      "closeButton": true,
-      "progressBar": true,
-      "positionClass": "toast-top-center",
-      "timeOut": "3000", // 3 seconds
-      "extendedTimeOut": "1000"
-    };
-
-    <% flash.each do |type, message| %>
-      <% toast_type = { notice: 'success', alert: 'error' }[type.to_sym] || 'info' %>
-      toastr.<%= toast_type %>("<%= j message %>");
-    <% end %>
-  });
-</script>
-
+      document.addEventListener("turbo:load", () => {
+        const flash = document.getElementById("flash");
+        if (flash) {
+          setTimeout(() => flash.remove(), 3000);
+        }
+      });
+    </script>
   </body>
 </html>

@@ -4,7 +4,7 @@
 
     <% if @booking %>
       <p class="text-gray-700 text-center mb-6">
-        You are making a payment for booking #<%= @booking.id %>. Total Price: <span class="font-semibold text-blue-600">₹<%= @booking.price %></span>
+        Total Price: <span class="font-semibold text-blue-600">₹<%= @booking.price %></span>
       </p>
 
       <%= form_with model: @payment, local: true, class: "space-y-6" do |f| %>

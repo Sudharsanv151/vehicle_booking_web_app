@@ -10,6 +10,9 @@ gem 'tailwindcss-rails'
 
 gem "pg", "~> 1.1"
 
+gem "image_processing", "~> 1.12"
+
+
 gem "puma", ">= 5.0"
 
 gem "importmap-rails"
