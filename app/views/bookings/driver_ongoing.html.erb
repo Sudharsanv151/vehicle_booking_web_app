@@ -1,17 +1,17 @@
-<div class="container mx-auto px-4 py-8">
-  <h1 class="text-3xl font-bold text-gray-800 mb-6">Ongoing Rides</h1>
+<div class="p-10">
+  <h1 class="text-2xl font-bold text-gray-800 mb-6">Ongoing Rides</h1>
 
   <% if @ongoing_bookings.any? %>
-    <div class="space-y-4"> <%# Adds vertical space between each ongoing ride card %>
+    <div class="space-y-4">
       <% @ongoing_bookings.each do |booking| %>
-        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div>
           <p class="mb-1"><strong class="font-semibold text-gray-800">Vehicle:</strong> <span class="text-gray-700"><%= booking.vehicle.model %></span></p>
           <p class="mb-1"><strong class="font-semibold text-gray-800">Customer:</strong> <span class="text-gray-700"><%= booking.user.name %></span></p>
           <p class="mb-1"><strong class="font-semibold text-gray-800">From:</strong> <span class="text-gray-700"><%= booking.start_location %></span></p>
           <p class="mb-1"><strong class="font-semibold text-gray-800">To:</strong> <span class="text-gray-700"><%= booking.end_location %></span></p>
           <p class="mb-1"><strong class="font-semibold text-gray-800">Price:</strong> <span class="text-gray-700">₹<%= booking.price %></span></p>
 
-          <div class="mt-4 pt-4 border-t border-gray-200"> <%# Separator for action/status %>
+          <div>
             <% if booking.payment&.payment_status %>
               <%= button_to "Finish Ride", finish_booking_path(booking), method: :patch, class: "inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md shadow-sm no-underline transition-colors duration-200" %>
             <% else %>
@@ -22,8 +22,8 @@
       <% end %>
     </div>
   <% else %>
-    <div class="text-center p-6 bg-white rounded-lg shadow-md border border-gray-200">
-      <p class="text-gray-700 text-lg mb-4">No ongoing rides at the moment.</p>
+    <div>
+      <p class="text-gray-700 text-md mb-4">No ongoing rides at the moment.</p>
       <%= link_to "Return to Home", home_path, class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-md shadow-md no-underline transition-colors duration-200" %>
     </div>
   <% end %>
