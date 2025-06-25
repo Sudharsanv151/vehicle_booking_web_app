@@ -16,6 +16,8 @@ Rails.application.routes.draw do
       patch :accept
       patch :finish
       patch :reject
+      patch :propose_price
+      patch :accept_price
     end
   end
 

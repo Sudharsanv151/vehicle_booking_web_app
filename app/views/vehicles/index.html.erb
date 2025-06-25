@@ -1,33 +1,84 @@
-<div class="flex flex-wrap justify-center gap-5 p-5">
-  <% @vehicles.each do |vehicle| %>
-    <div class="flex flex-col justify-between border border-gray-300 rounded-lg p-4 shadow-md bg-white
-                w-70 h-[420px]">
+<div class="max-w-7xl mx-auto px-4 py-4">
+  <h1 class="text-2xl font-bold text-gray-900 text-center mb-6">Browse Vehicles</h1>
 
-      <% if vehicle.image.attached? %>
-        <%= image_tag vehicle.image, class: "w-full h-[200px] rounded mb-3 shadow-sm object-cover" %> <%# Fixed size %>
-      <% else %>
-        <div class="w-full h-[200px] bg-gray-100 text-gray-500 text-sm flex items-center justify-center rounded mb-3">
-          No Image Available
+  <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
+    <div class="flex flex-wrap gap-4 items-end">
+      <%= form_with url: vehicles_path, method: :get, local: true, class: "flex gap-2 flex-wrap" do %>
+        <div>
+          <%= label_tag :query, "Search", class: "block text-sm text-gray-700 mb-1" %>
+          <%= text_field_tag :query, params[:query], placeholder: "Model or Driver", 
+              class: "border border-gray-300 rounded px-3 py-2 text-sm w-56" %>
+        </div>
+        <div class="self-end">
+          <%= submit_tag "Search", class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-medium" %>
         </div>
       <% end %>
 
-      <p class="mb-4 text-base leading-normal">
-        <strong class="text-gray-800 text-lg"><%= vehicle.model %></strong> (<%= vehicle.vehicle_type %>) <br>
-        <strong class="text-gray-800">Driver:</strong> <%= vehicle.driver.user.name %><br>
-        (Capacity: <%= vehicle.capacity %>)
-        <% if vehicle.tags.any? %>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <% vehicle.tags.each do |tag| %>
-              <span class="text-sm bg-blue-200  px-2 py-0.5 rounded-full font-medium">
-                <%= tag.name %>
-              </span>
+      <%= form_with url: vehicles_path, method: :get, local: true, class: "flex gap-4 flex-wrap" do %>
+        <div>
+          <%= label_tag :vehicle_type, "Type", class: "block text-sm text-gray-700 mb-1" %>
+          <%= select_tag :vehicle_type, options_for_select(@types.unshift("All"), params[:vehicle_type]), include_blank: true,
+              class: "border border-gray-300 rounded px-3 py-2 text-sm w-32" %>
+        </div>
+
+        <div>
+          <%= label_tag :tag_id, "Tag", class: "block text-sm text-gray-700 mb-1" %>
+          <%= select_tag :tag_id, options_from_collection_for_select(@tags, :id, :name, params[:tag_id]), include_blank: "All",
+              class: "border border-gray-300 rounded px-3 py-2 text-sm w-32" %>
+        </div>
+
+        <div>
+          <%= label_tag :min_rating, "Min Rating", class: "block text-sm text-gray-700 mb-1" %>
+          <%= number_field_tag :min_rating, params[:min_rating], in: 1..5, step: 0.1,
+              class: "border border-gray-300 rounded px-3 py-2 text-sm w-24" %>
+        </div>
+
+        <div class="self-end">
+          <%= submit_tag "Filter", class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="lg:col-span-3">
+    <% if @vehicles.any? %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+        <% @vehicles.each do |vehicle| %>
+          <div class="bg-white w-65  border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition flex flex-col text-sm">
+            <% if vehicle.image.attached? %>
+              <%= image_tag vehicle.image, class: "w-full h-40 object-cover rounded-t-lg" %>
+            <% else %>
+              <div class="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-500 rounded-t-lg text-sm">
+                No Image
+              </div>
             <% end %>
+
+            <div class="p-3 flex flex-col flex-1">
+              <h3 class="text-base font-semibold text-gray-800 mb-1 leading-snug">
+                <%= vehicle.model %> <span class="text-sm text-gray-500">(<%= vehicle.vehicle_type %>)</span>
+              </h3>
+              <p class="text-sm text-gray-700 mb-2 leading-tight">
+                <strong>Driver:</strong> <%= vehicle.driver.user.name %><br>
+                <strong>Rating:</strong> <%= vehicle.average_rating %><br>
+                <strong>Capacity:</strong> <%= vehicle.capacity %>
+              </p>
+
+              <% if vehicle.tags.any? %>
+                <div class="flex flex-wrap gap-1 mb-3">
+                  <% vehicle.tags.each do |tag| %>
+                    <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium"><%= tag.name %></span>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <%= link_to "Book Now", new_booking_path(vehicle_id: vehicle.id),
+                class: "mt-auto bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded text-sm text-center font-medium" %>
+            </div>
           </div>
         <% end %>
-      </p>
-
-      <%= link_to "Book Now", new_booking_path(vehicle_id: vehicle.id),
-          class: "inline-block bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-md no-underline text-center mt-auto" %>
-    </div>
-  <% end %>
+      </div>
+    <% else %>
+      <p class="text-gray-600 text-base text-center mt-10 font-medium">No vehicles found for your search or filter.</p>
+    <% end %>
+  </div>
 </div>

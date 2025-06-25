@@ -39,7 +39,7 @@ class User < ApplicationRecord
   def assign_welcome_reward
     return unless customer?
 
-    rewards.built(
+    rewards.build(
       points:20,
       reward_type:"welcome reward bonus"
     )
