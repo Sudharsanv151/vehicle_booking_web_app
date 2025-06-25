@@ -10,6 +10,9 @@ gem 'tailwindcss-rails'
 
 gem "pg", "~> 1.1"
 
+gem "image_processing", "~> 1.12"
+
+
 gem "puma", ">= 5.0"
 
 gem "importmap-rails"
@@ -19,6 +22,8 @@ gem "turbo-rails"
 gem "stimulus-rails"
 
 gem "jbuilder"
+
+gem 'devise'
 
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

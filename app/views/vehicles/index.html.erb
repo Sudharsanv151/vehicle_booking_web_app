@@ -1,14 +1,33 @@
 <div class="flex flex-wrap justify-center gap-5 p-5">
   <% @vehicles.each do |vehicle| %>
     <div class="flex flex-col justify-between border border-gray-300 rounded-lg p-4 shadow-md bg-white
-                min-w-72 max-w-sm flex-grow-0 flex-shrink-0">
+                w-70 h-[420px]">
+
+      <% if vehicle.image.attached? %>
+        <%= image_tag vehicle.image, class: "w-full h-[200px] rounded mb-3 shadow-sm object-cover" %> <%# Fixed size %>
+      <% else %>
+        <div class="w-full h-[200px] bg-gray-100 text-gray-500 text-sm flex items-center justify-center rounded mb-3">
+          No Image Available
+        </div>
+      <% end %>
+
       <p class="mb-4 text-base leading-normal">
         <strong class="text-gray-800 text-lg"><%= vehicle.model %></strong> (<%= vehicle.vehicle_type %>) <br>
-        <strong class="text-gray-800">Driver:</strong> <%= vehicle.driver.user.name%><br>
-        <%# Rating: <> %>
+        <strong class="text-gray-800">Driver:</strong> <%= vehicle.driver.user.name %><br>
         (Capacity: <%= vehicle.capacity %>)
+        <% if vehicle.tags.any? %>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <% vehicle.tags.each do |tag| %>
+              <span class="text-sm bg-blue-200  px-2 py-0.5 rounded-full font-medium">
+                <%= tag.name %>
+              </span>
+            <% end %>
+          </div>
+        <% end %>
       </p>
-      <%= link_to "Book Now", new_booking_path(vehicle_id: vehicle.id), class: "inline-block bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-md no-underline text-center mt-auto" %>
+
+      <%= link_to "Book Now", new_booking_path(vehicle_id: vehicle.id),
+          class: "inline-block bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-md no-underline text-center mt-auto" %>
     </div>
   <% end %>
 </div>

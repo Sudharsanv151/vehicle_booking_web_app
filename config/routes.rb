@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   get "select_role", to: "users#select_role"
   get "home", to: "users#home"
-  resources :users, only: [:new, :create]
+  resources :users, only: [:new, :create, :edit, :update, :destroy]
 
   resources :vehicles do
     get "ratings", to: "vehicles#ratings"
@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   resources :ratings, only: [:new, :create]
 
   #CUSTOM ROUTES
+  get "/profile", to: "users#profile", as: :profile
   get "customer/ride_history", to: "bookings#customer_history", as: :customer_ride_history
   get "driver/ride_history", to: "bookings#driver_history", as: :driver_ride_history
   get "driver/ongoing", to: "bookings#driver_ongoing", as: :driver_ongoing

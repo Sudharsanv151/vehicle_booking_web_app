@@ -1,0 +1,37 @@
+<div class="p-10 w-1/2">
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">Edit Profile</h1>
+
+  <div>
+    <%= form_with model: @user, local: true do |f| %>
+
+      <div class="mb-4">
+        <%= f.label :name, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :name, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :email, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.email_field :email, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :mobile_no, "Mobile Number", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :mobile_no, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+      </div>
+
+      <% if @user.userable_type == "Customer" %>
+        <div class="mb-4">
+          <%= label_tag :location, "Location", class: "block text-sm font-medium text-gray-700" %>
+          <%= text_field_tag :location, @user.userable.location, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+        </div>
+      <% elsif @user.userable_type == "Driver" %>
+        <div class="mb-4">
+          <%= label_tag :licence_no, "License Number", class: "block text-sm font-medium text-gray-700" %>
+          <%= text_field_tag :licence_no, @user.userable.licence_no, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+        </div>
+      <% end %>
+
+      <%= f.submit "Update Profile", class: "w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-md shadow-md text-lg transition-colors duration-200 cursor-pointer" %>
+    <% end %>
+  </div>
+</div>

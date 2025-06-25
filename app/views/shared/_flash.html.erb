@@ -1,0 +1,9 @@
+<% if flash[:notice] %>
+  <div id="flash" class="fixed top-18 left-1/2 transform -translate-x-1/2 bg-green-400 text-white px-6 py-3 rounded shadow-lg z-50 text-center">
+    <%= flash[:notice] %>
+  </div>
+<% elsif flash[:alert] %>
+  <div id="flash" class="fixed top-18 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded shadow-lg z-50 text-center">
+    <%= flash[:alert] %>
+  </div>
+<% end %>
