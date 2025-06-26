@@ -1,5 +1,5 @@
 class Driver < ApplicationRecord
-  has_one :user, as: :userable, dependent: :destroy
+  has_one :user, as: :userable
   has_many :vehicles, dependent: :destroy
   has_many :bookings, through: :vehicles
 
@@ -25,7 +25,6 @@ class Driver < ApplicationRecord
 
 
   private
-
 
   def normalize_licence
     self.licence_no=licence_no.to_s.strip.upcase

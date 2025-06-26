@@ -6,8 +6,8 @@
     </div>
 
     <div class="flex flex-wrap items-center space-x-6">
-      <% if session[:user_id] %>
-        <% user = User.find_by(id: session[:user_id]) %>
+      <% if user_signed_in? %>
+        <% user = current_user %>
 
         <% if user %>
           <% if user.userable_type == "Customer" %>
@@ -26,16 +26,12 @@
 
           <% end %>
 
-          <%= link_to "Logout", select_role_path, method: :get, class: "bg-red-600 hover:bg-red-700 text-white font-semibold py-1.5 px-3 rounded text-base no-underline transition-colors duration-200" %>
-        
+          <%= button_to "Logout", select_role_path, method: :get,form: { onsubmit: "return confirm('Are you sure you want to logout?');", class: "inline" },class: "bg-red-600 hover:bg-red-700 text-white font-semibold py-1.5 px-3 rounded text-base no-underline transition-colors duration-200" %>
+
         <% else %>
-          <% session[:user_id] = nil %>
           <%= link_to "Login / Sign Up", select_role_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded text-base no-underline transition-colors duration-200" %>
         <% end %>
-
-      <% else %>
-        <%= link_to "Login / Sign Up", select_role_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded text-base no-underline transition-colors duration-200" %>
-      <% end %>
+      <%end%>
     </div>
   </div>
 </nav>

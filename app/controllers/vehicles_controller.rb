@@ -1,4 +1,5 @@
 class VehiclesController < ApplicationController
+  
   before_action :set_vehicle, only: [:edit, :update, :destroy, :ratings, :ride_history]
   before_action :set_driver, only: [:create, :driver_index]
 
@@ -37,7 +38,8 @@ class VehiclesController < ApplicationController
     end
   end
 
-  def edit; end
+  def edit
+  end
 
   def update
     if @vehicle.update(vehicle_params)
@@ -77,7 +79,7 @@ class VehiclesController < ApplicationController
   end
 
   def set_driver
-    @driver = User.find_by(id: session[:user_id])&.userable
+    @driver = current_user&.userable
   end
 
   def vehicle_params

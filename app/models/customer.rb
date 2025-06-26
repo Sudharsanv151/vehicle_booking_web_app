@@ -1,5 +1,5 @@
 class Customer < ApplicationRecord
-  has_one :user, as: :userable, dependent: :destroy
+  has_one :user, as: :userable
   has_many :bookings, through: :user
   has_many :payments, through: :bookings
   has_many :rewards, through: :user

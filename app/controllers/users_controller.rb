@@ -3,9 +3,13 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:profile, :edit, :update, :destroy]
 
   def select_role
+    sign_out(current_user) if user_signed_in?
+    reset_session
+    store_location_for(:user, nil)
   end
 
   def profile
+    @user=current_user
   end
 
   def new
@@ -30,11 +34,12 @@ class UsersController < ApplicationController
   end
 
   def home
-    @user = User.find_by(id: session[:user_id])
-    unless @user
-      flash[:alert] = "User not found!!"
-      redirect_to select_role_path
+    unless user_signed_in?
+      redirect_to select_role_path, alert: "Please sign in first."
+      return
     end
+
+    @user = current_user
   end
 
   def edit
@@ -42,13 +47,19 @@ class UsersController < ApplicationController
 
   def update
     if @user.update(user_params)
-      flash[:notice]="Profile updated!!"
+      if @user.customer?
+        @user.userable.update(location: params[:location])
+      elsif @user.driver?
+        @user.userable.update(licence_no: params[:licence_no])
+      end
+
+      flash[:notice] = "Profile updated!"
       redirect_to profile_path
     else
-      flash[:alert]="Error in updating profile"
       render :edit, status: :unprocessable_entity
     end
   end
+
 
   def destroy
     @user.destroy
@@ -60,7 +71,7 @@ class UsersController < ApplicationController
   private
 
   def set_user
-    @user = User.find_by(id:session[:user_id])
+    @user = current_user
   end
 
   def user_params

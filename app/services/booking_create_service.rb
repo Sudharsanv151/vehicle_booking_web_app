@@ -1,12 +1,12 @@
 class BookingCreateService
-  def initialize(params, user_id)
+  def initialize(params, user)
     @params = params
-    @user_id = user_id
+    @user =user
   end
 
   def call
     booking = Booking.new(@params)
-    booking.user_id = @user_id
+    booking.user=@user
     booking.booking_date = Time.current
     booking.save
     booking

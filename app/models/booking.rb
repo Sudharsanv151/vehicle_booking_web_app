@@ -7,7 +7,6 @@ class Booking < ApplicationRecord
 
   validates :start_location, :end_location, :price, :start_time, presence: true
   validates :price, numericality: { greater_than: 50 }
-  
   validate :start_time_not_past
   validate :booking_vehicle_exists
   validate :user_has_no_conflict, on: :create
@@ -48,6 +47,8 @@ class Booking < ApplicationRecord
   end
 
   def user_has_no_conflict
+    return if user.nil?
+    
     if user.bookings.where("start_time = ?",start_time).exists?
       errors.add(:base, "You already have a booking on same time")
     end 
@@ -56,7 +57,6 @@ class Booking < ApplicationRecord
 
   def reward_customer_after_completion
     return unless saved_change_to_ride_status? && ride_status?
-      
     Reward.create(
       user_id: user_id,
       points: 10,

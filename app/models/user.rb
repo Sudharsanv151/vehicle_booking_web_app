@@ -1,29 +1,33 @@
 class User < ApplicationRecord
+  
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
+
   belongs_to :userable, polymorphic: true
   has_many :bookings, dependent: :destroy
-  has_many :ratings ,dependent: :destroy
+  has_many :ratings, dependent: :destroy
   has_many :rewards, dependent: :destroy
 
-  validates :name, :email, :password, :mobile_no, presence:true
-  validates :email, uniqueness:true, format:{with: URI::MailTo::EMAIL_REGEXP}
-  validates :mobile_no, length:{is:10}, numericality:{only_integer:true}
+  validates :name, presence: true, length: { minimum: 2, maximum: 50 }
+  validates :mobile_no, presence: true
+  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
 
+  validate :valid_mobile_no_format
+  validate :validate_userable_presence
 
-  scope :customers, ->{where(userable_type:'Customer')}
-  scope :drivers, ->{where(userable_type:'Driver')}
-  scope :with_rewards, ->{joins(:rewards).distinct}
+  scope :customers, -> { where(userable_type: 'Customer') }
+  scope :drivers, -> { where(userable_type: 'Driver') }
+  scope :with_rewards, -> { joins(:rewards).distinct }
 
-
-  before_validation :normalize_email
+  before_validation :normalize_email_and_mobile
   before_create :assign_welcome_reward
 
-
   def driver?
-    userable_type=="Driver"
+    userable_type == 'Driver'
   end
 
   def customer?
-    userable_type=="Customer"
+    userable_type == 'Customer'
   end
 
   def total_reward_points
@@ -32,17 +36,31 @@ class User < ApplicationRecord
 
   private
 
-  def normalize_email
-    self.email=email.to_s.strip.downcase
+  def normalize_email_and_mobile
+    if email.blank?
+      errors.add(:email, "is needed")
+    end
+  
+    self.email = email.to_s.strip.downcase
+    self.mobile_no = mobile_no.to_s.strip
   end
 
   def assign_welcome_reward
     return unless customer?
-
-    rewards.build(
-      points:20,
-      reward_type:"welcome reward bonus"
-    )
+    rewards.build(points: 20, reward_type: "Welcome Reward Bonus")
   end
 
+  def valid_mobile_no_format
+    return if mobile_no.blank?
+
+    unless mobile_no =~ /\A\d{10}\z/
+      errors.add(:mobile_no, "must be exactly 10 digits and only numbers")
+    end
+  end
+
+  def validate_userable_presence
+    if userable.nil? || !(userable.is_a?(Customer) || userable.is_a?(Driver))
+      errors.add(:userable, "must be assigned as a valid Customer or Driver")
+    end
+  end
 end

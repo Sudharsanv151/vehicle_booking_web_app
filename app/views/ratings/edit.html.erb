@@ -1,0 +1,30 @@
+<div class="container m-10">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Edit Rating</h2>
+    <%= form_with model: @rating, local: true, class: "space-y-4" do |f| %>
+    <% if @rating.errors.any? %>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <ul class="list-disc list-inside mt-2 text-sm">
+            <% @rating.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+            <% end %>
+        </ul>
+        </div>
+    <% end %>
+
+    <div>
+        <%= f.label :stars, class: "block font-medium text-gray-700" %>
+        <%= f.select :stars, 1..5, {}, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" %>
+    </div>
+
+    <div>
+        <%= f.label :comments, class: "block font-medium text-gray-700" %>
+        <%= f.text_field :comments, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" %>
+    </div>
+
+    <div class="flex space-x-2">
+        <%= f.submit "Update", class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded" %>
+        <%= link_to "Cancel", customer_ride_history_path, class: "bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded" %>
+    </div>
+    <% end %>
+    
+</div>

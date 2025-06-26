@@ -1,19 +1,21 @@
 class BookingsController < ApplicationController
+  
   before_action :set_driver_id, only: [:driver_ongoing, :driver_history, :requests, :propose_price]
 
   def index
-    user = User.find_by(id: session[:user_id])
+    user = current_user
     @requested = user.bookings.where(status: false)
     @ongoing = user.bookings.where(status: true, ride_status: false)
   end
 
   def new
     @vehicle = Vehicle.find_by(id: params[:vehicle_id])
+    @user=current_user
     @booking = Booking.new
   end
 
   def create
-    @booking = BookingCreateService.new(booking_params, session[:user_id]).call
+    @booking = BookingCreateService.new(booking_params, current_user).call
     if @booking.persisted?
       flash[:notice] = "Booking requested successfully!"
       redirect_to bookings_path
@@ -24,8 +26,8 @@ class BookingsController < ApplicationController
   end
 
   def destroy
-    booking = Booking.find_by(id: params[:id])
-    if booking.user_id == session[:user_id] && !booking.status
+    booking = Booking.find_by(id: params[:id])  
+    if booking.user_id == current_user.id && !booking.status
       booking.destroy
       flash[:notice] = "Booking cancelled!"
     else
@@ -76,7 +78,7 @@ class BookingsController < ApplicationController
   end
 
   def customer_history
-    @user = User.find_by(id: session[:user_id])
+    @user = current_user
     @completed = @user.bookings.where(ride_status: true)
   end
 
@@ -99,6 +101,6 @@ class BookingsController < ApplicationController
   end
 
   def set_driver_id
-    @driver_id = User.find_by(id: session[:user_id])&.userable&.id
+    @driver_id = current_user&.userable&.id
   end
 end
