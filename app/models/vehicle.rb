@@ -16,8 +16,8 @@ class Vehicle < ApplicationRecord
   scope :available, ->{left_outer_joins(:booking).where(bookings: {status:[nil,false]})}
   scope :with_ratings_above, ->(stars){join(:ratings).group(:id).having('AVG(ratings.stars) >= ?', stars)}
 
+  before_save :assign_default_tags_if_empty
   after_destroy :destroy_attaches_image
-  after_create :assign_default_tags_if_empty
 
 
   def average_rating
@@ -40,7 +40,9 @@ class Vehicle < ApplicationRecord
   end
 
   def assign_default_tags_if_empty
-    tags << Tag.find_or_created_by(name: "uncategorized")
+    if tags.empty?
+      tags << Tag.find_or_create_by(name: "uncategorized")
+    end
   end
 
 end

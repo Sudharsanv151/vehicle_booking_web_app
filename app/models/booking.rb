@@ -7,6 +7,7 @@ class Booking < ApplicationRecord
 
   validates :start_location, :end_location, :price, :start_time, presence: true
   validates :price, numericality: { greater_than: 50 }
+  
   validate :start_time_not_past
   validate :booking_vehicle_exists
   validate :user_has_no_conflict, on: :create
@@ -18,6 +19,7 @@ class Booking < ApplicationRecord
   scope :not_finished, -> { where(ride_status: false) }
   scope :upcoming, -> {where("start_time > ?",Time.current)}
   scope :past, -> {where("start_time < ?",Time.current)}
+  scope :negotiated, ->{where.not(proposed_price:nil)}
   
   
   after_update :reward_customer_after_completion
@@ -28,6 +30,9 @@ class Booking < ApplicationRecord
     vehicle.driver
   end
 
+  def final_price
+    customer_accepted ? proposed_price : price
+  end
 
   private
   
@@ -49,8 +54,6 @@ class Booking < ApplicationRecord
   end
 
 
-  # callback
-
   def reward_customer_after_completion
     return unless saved_change_to_ride_status? && ride_status?
       
@@ -64,7 +67,5 @@ class Booking < ApplicationRecord
   def delete_unwanted_ratings
     ratings.destroy_all
   end
-
-
 
 end

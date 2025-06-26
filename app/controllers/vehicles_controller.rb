@@ -1,36 +1,47 @@
 class VehiclesController < ApplicationController
-
   before_action :set_vehicle, only: [:edit, :update, :destroy, :ratings, :ride_history]
   before_action :set_driver, only: [:create, :driver_index]
 
   def index
+    @tags = Tag.all
+    @types = Vehicle.distinct.pluck(:vehicle_type)
     @vehicles = Vehicle.includes(:tags, :driver)
+
+    if params[:query].present?
+      keyword = params[:query].downcase
+      @vehicles = @vehicles.select do |v|
+        v.model.downcase.include?(keyword) || v.driver.user.name.downcase.include?(keyword)
+      end
+    else
+      @vehicles = @vehicles.by_type(params[:vehicle_type]) if params[:vehicle_type].present? && params[:vehicle_type] != "All"
+      @vehicles = @vehicles.with_tag(params[:tag_id]) if params[:tag_id].present?
+      @vehicles = @vehicles.with_ratings_above(params[:min_rating].to_f) if params[:min_rating].present?
+    end
   end
+
 
   def new
     @vehicle = Vehicle.new
   end
 
-
   def create
-    @vehicle = Vehicle.new(vehicle_params)
-    @vehicle.driver_id = User.find_by(id: session[:user_id])&.userable&.id
+    service = VehicleCreationService.new(vehicle_params, @driver.id, params[:new_tags])
+    @vehicle = service.call
 
-    if @vehicle.save
-      flash[:notice]="Vehicle added successfully!"
+    if @vehicle.persisted?
+      flash[:notice] = "Vehicle added successfully!"
       redirect_to driver_vehicles_path
     else
-      flash[:alert]="Failed to add vehicle"
+      flash[:alert] = "Failed to add vehicle"
       render :new, status: :unprocessable_entity
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if @vehicle.update(vehicle_params)
-      flash[:notice]="Updated the vehicle details successfully!"
+      flash[:notice] = "Updated the vehicle details successfully!"
       redirect_to driver_vehicles_path
     else
       render :edit, status: :unprocessable_entity
@@ -70,6 +81,6 @@ class VehiclesController < ApplicationController
   end
 
   def vehicle_params
-    params.require(:vehicle).permit(:model, :vehicle_type, :capacity, :licence_plate, :image, tag_ids:[])
+    params.require(:vehicle).permit(:model, :vehicle_type, :capacity, :licence_plate, :image, tag_ids: [])
   end
 end
