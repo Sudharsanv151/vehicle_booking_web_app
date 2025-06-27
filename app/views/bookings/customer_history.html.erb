@@ -22,7 +22,7 @@
           </p>
           <div class="flex items-center space-x-2 mt-2">
             <%= link_to "Edit", edit_rating_path(ride_rating), class: "text-xs bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-2 rounded" %>
-            <%= button_to "Delete", rating_path(ride_rating), method: :delete, data: { confirm: "Delete this ride rating?" }, class: "text-xs bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded" %>
+            <%= button_to "Delete", rating_path(ride_rating), method: :delete, form: { onsubmit: "return confirm('Are you sure you want to delete this ride rating?');" }, class: "text-xs bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded" %>
           </div>
 
         <% else %>
@@ -37,8 +37,7 @@
           </p>
           <div class="flex items-center space-x-2 mt-2">
             <%= link_to "Edit", edit_rating_path(vehicle_rating), class: "text-xs bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-2 rounded" %>
-            <%= button_to "Delete", rating_path(vehicle_rating), method: :delete, data: { confirm: "Delete this vehicle rating?" }, class: "text-xs bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded" %>
-          </div>
+            <%= button_to "Delete", rating_path(vehicle_rating), method: :delete, form: { onsubmit: "return confirm('Are you sure you want to delete this vehicle rating?');" }, class: "text-xs bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded" %>
         <% else %>
           <%= link_to "Rate Vehicle", new_rating_path(rateable_type: 'Vehicle', rateable_id: booking.vehicle_id), class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded no-underline text-sm w-fit" %>
         <% end %>

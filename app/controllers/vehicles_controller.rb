@@ -61,8 +61,30 @@ class VehiclesController < ApplicationController
   end
 
   def driver_index
-    @vehicles = @driver.vehicles
+    @types = Vehicle.distinct.pluck(:vehicle_type).compact
+    @tags = Tag.all
+
+    vehicles = Vehicle.where(driver_id: current_user.userable.id)
+
+    if params[:query].present?
+      vehicles = vehicles.joins(:driver).where("vehicles.model ILIKE :q", q: "%#{params[:query]}%")
+    end
+
+    if params[:vehicle_type].present? && params[:vehicle_type] != "All"
+      vehicles = vehicles.where(vehicle_type: params[:vehicle_type])
+    end
+
+    if params[:tag_id].present?
+      vehicles = vehicles.joins(:tags).where(tags: { id: params[:tag_id] })
+    end
+
+    if params[:min_rating].present?
+      vehicles = vehicles.select { |v| v.average_rating.to_f >= params[:min_rating].to_f }
+    end
+
+    @vehicles = vehicles
   end
+
 
   def ratings
     @ratings = @vehicle.ratings.includes(:user)

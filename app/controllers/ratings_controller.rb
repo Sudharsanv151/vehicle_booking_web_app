@@ -13,7 +13,7 @@ class RatingsController < ApplicationController
     @rating.user_id = @user_id
 
     if @rating.save
-      Reward.create(user_id: @rating.user_id, points: 10, reward_type: "Rating Bonus")
+      # Reward.create(user_id: @rating.user_id, points: 10, reward_type: "Rating Bonus")
       flash[:notice] = "Rating submitted successfully!"
       redirect_to customer_ride_history_path
     else
