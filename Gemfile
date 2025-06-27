@@ -25,6 +25,11 @@ gem "jbuilder"
 
 gem 'devise'
 
+gem 'activeadmin'
+
+gem 'sassc-rails'
+
+
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 gem "bootsnap", require: false
