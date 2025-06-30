@@ -1,18 +1,61 @@
 ActiveAdmin.register User do
 
-  # See permitted parameters documentation:
-  # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
-  #
-  # Uncomment all parameters which should be permitted for assignment
-  #
-  permit_params :name, :email, :mobile_no, :userable_type, :userable_id, :encrypted_password, :reset_password_token, :reset_password_sent_at, :remember_created_at, :sign_in_count, :current_sign_in_at, :last_sign_in_at, :current_sign_in_ip, :last_sign_in_ip, :password
-  #
-  # or
-  #
-  # permit_params do
-  #   permitted = [:name, :email, :mobile_no, :userable_type, :userable_id, :encrypted_password, :reset_password_token, :reset_password_sent_at, :remember_created_at, :sign_in_count, :current_sign_in_at, :last_sign_in_at, :current_sign_in_ip, :last_sign_in_ip, :password]
-  #   permitted << :other if params[:action] == 'create' && current_user.admin?
-  #   permitted
-  # end
-  
+  permit_params :name, :email, :mobile_no
+
+  filter :id
+  filter :name
+  filter :email
+  filter :mobile_no
+  filter :userable_type
+  filter :created_at
+
+
+  index do
+    selectable_column
+    id_column
+    column :name
+    column :email
+    column :mobile_no
+    column :userable_type
+    column("Extra Info") do |user|
+      case user.userable_type
+      when "Customer"
+        user.userable&.location
+      when "Driver"
+        user.userable&.licence_no
+      else
+        "-"
+      end
+    end
+    column :created_at
+    actions
+  end
+
+  show do
+    attributes_table do
+      row :name
+      row :email
+      row :mobile_no
+      row :userable_type
+      row :created_at
+      row :updated_at
+      if user.userable_type == "Customer"
+        row("Location") { user.userable&.location || "-" }
+      elsif user.userable_type == "Driver"
+        row("Licence No") { user.userable&.licence_no || "-" }
+      end
+    end
+  end
+
+  form do |f|
+    f.inputs do
+      f.input :name
+      f.input :email
+      f.input :mobile_no
+      f.input :userable_type
+      f.input :userable_id
+    end
+    f.actions
+  end
+
 end

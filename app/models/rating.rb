@@ -13,11 +13,11 @@ class Rating < ApplicationRecord
   after_create :reward_user
 
   def self.ransackable_attributes(auth_object = nil)
-    ["comments", "created_at", "id", "rateable_id", "rateable_type", "stars", "updated_at", "user_id"]
+    %w[comments created_at id rateable_id rateable_type stars updated_at user_id]
   end
 
   def self.ransackable_associations(auth_object = nil)
-    ["user", "rateable"]
+    %w[user rateable]
   end
 
   private

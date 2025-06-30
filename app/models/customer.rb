@@ -19,7 +19,7 @@ class Customer < ApplicationRecord
 
 
   def self.ransackable_associations(auth_object = nil)
-    ["bookings", "payments", "rewards", "user"]
+    %w[bookings payments rewards user]
   end
 
   def total_reward_points

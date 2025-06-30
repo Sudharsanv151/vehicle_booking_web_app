@@ -12,6 +12,13 @@ class Driver < ApplicationRecord
 
   before_validation :normalize_licence
 
+  def self.ransackable_associations(auth_object = nil)
+    %w[bookings user vehicles]
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[id licence_no created_at updated_at]
+  end
 
   def total_completed_rides
     bookings.where(ride_status:true).count

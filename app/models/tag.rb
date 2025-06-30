@@ -15,7 +15,7 @@ class Tag < ApplicationRecord
   private
 
   def normalize_name
-    self.name = name.to_s.strip.downcase
+    self.name = name.to_s.strip.capitalize
   end
 
 

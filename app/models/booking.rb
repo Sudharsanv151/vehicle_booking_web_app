@@ -27,16 +27,11 @@ class Booking < ApplicationRecord
   after_destroy :delete_unwanted_ratings
 
   def self.ransackable_attributes(auth_object = nil)
-    [
-      "booking_date", "created_at", "customer_accepted",
-      "end_location", "end_time", "id", "price", "proposed_price",
-      "ride_status", "start_location", "start_time", "status",
-      "updated_at", "user_id", "vehicle_id"
-    ]
+    %w[booking_date created_at customer_accepted end_location end_time id price proposed_price ride_status start_location start_time status updated_at user_id vehicle_id]
   end
 
   def self.ransackable_associations(auth_object = nil)
-    ["user", "vehicle", "ratings", "payment"]
+    %w[user vehicle ratings payment]
   end
 
 
@@ -78,7 +73,6 @@ class Booking < ApplicationRecord
       errors.add(:base, "You already have a booking on same time")
     end 
   end
-
 
   def reward_customer_after_completion
     return unless saved_change_to_ride_status? && ride_status?

@@ -12,7 +12,6 @@ class User < ApplicationRecord
   validates :name, presence: true, length: { minimum: 2, maximum: 50 }
   validates :mobile_no, presence: true
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-
   validate :valid_mobile_no_format
   validate :validate_userable_presence
 
@@ -23,21 +22,13 @@ class User < ApplicationRecord
   before_validation :normalize_email_and_mobile
   before_create :assign_welcome_reward
 
-  def self.ransackable_attributes(auth_object = nil)
-    [
-      "id",
-      "name",
-      "email",
-      "mobile_no",
-      "userable_type",
-      "userable_id",
-      "created_at",
-      "updated_at"
-    ]
+  
+  def self.ransackable_associations(auth_object = nil)
+    ["bookings", "ratings", "rewards", "userable"]
   end
 
-  def self.ransackable_associations(auth_object = nil)
-    ["userable"]
+  def self.ransackable_attributes(auth_object = nil)
+    %w[id name email mobile_no userable_type userable_id created_at updated_at]
   end
 
 

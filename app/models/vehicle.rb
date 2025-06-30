@@ -23,6 +23,14 @@ class Vehicle < ApplicationRecord
   after_destroy :destroy_attaches_image
 
 
+  def self.ransackable_attributes(auth_object = nil)
+    %w[id model vehicle_type driver_id licence_plate created_at updated_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[driver bookings]
+  end
+
   def average_rating
     ratings.average(:stars)&.round(1) || "not rated yet"
   end

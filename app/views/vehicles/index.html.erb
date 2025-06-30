@@ -59,10 +59,14 @@
               </h3>
               <p class="text-sm text-gray-700 mb-2 leading-tight">
                 <strong>Driver:</strong> <%= vehicle.driver.user.name %><br>
-                <strong>Rating:</strong> <%= vehicle.average_rating %><br>
+                <% avg = vehicle.average_rating %>
+                <% if avg.is_a?(Numeric) %>
+                  <strong>Average Rating:</strong> <%= avg %>⭐
+                <% else %>
+                  <strong>Average Rating:</strong> <%= avg %>
+                <% end %><br>
                 <strong>Capacity:</strong> <%= vehicle.capacity %>
               </p>
-
               <% if vehicle.tags.any? %>
                 <div class="flex flex-wrap gap-1 mb-3">
                   <% vehicle.tags.each do |tag| %>
