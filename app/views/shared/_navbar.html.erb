@@ -16,21 +16,19 @@
             <%= link_to "Ride History", customer_ride_history_path, class: "text-white no-underline text-base" %>
             <%= link_to "Profile", profile_path, class: "text-white no-underline text-base" %>
 
-
           <% else %>
             <%= link_to "Manage Vehicles", driver_vehicles_path, class: "text-white no-underline text-base" %>
             <%= link_to "Booking Requests", booking_requests_path, class: "text-white no-underline text-base" %>
             <%= link_to "Ongoing Rides", driver_ongoing_path, class: "text-white no-underline text-base" %>
             <%= link_to "Ride History", driver_ride_history_path, class: "text-white no-underline text-base" %>
             <%= link_to "Profile", profile_path, class: "text-white no-underline text-base" %>
-
           <% end %>
 
-          <%= button_to "Logout", select_role_path, method: :get,form: { onsubmit: "return confirm('Are you sure you want to logout?');", class: "inline" },class: "bg-red-600 hover:bg-red-700 text-white font-semibold py-1.5 px-3 rounded text-base no-underline transition-colors duration-200" %>
-
-        <% else %>
-          <%= link_to "Login / Sign Up", select_role_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded text-base no-underline transition-colors duration-200" %>
+          <%= button_to "Logout", select_role_path, method: :get, form: { onsubmit: "return confirm('Are you sure you want to logout?');", class: "inline" }, class: "bg-red-600 hover:bg-red-700 text-white font-semibold py-1.5 px-3 rounded text-base no-underline transition-colors duration-200" %>
         <% end %>
+      <%# <%else%>
+        <%# <%= link_to "Admin Login", new_admin_user_session_path, class: "bg-gray-600 hover:bg-gray-700 text-white font-semibold py-1.5 px-3 rounded text-base no-underline transition-colors duration-200" %> 
+
       <%end%>
     </div>
   </div>

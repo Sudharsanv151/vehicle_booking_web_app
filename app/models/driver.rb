@@ -1,4 +1,6 @@
 class Driver < ApplicationRecord
+  acts_as_paranoid
+  
   has_one :user, as: :userable
   has_many :vehicles, dependent: :destroy
   has_many :bookings, through: :vehicles

@@ -10,13 +10,15 @@ class VehiclesController < ApplicationController
 
     if params[:query].present?
       keyword = params[:query].downcase
-      @vehicles = @vehicles.select do |v|
+      filtered_vehicles = @vehicles.select do |v|
         v.model.downcase.include?(keyword) || v.driver.user.name.downcase.include?(keyword)
       end
+      @vehicles = Kaminari.paginate_array(filtered_vehicles).page(params[:page]).per(8)
     else
       @vehicles = @vehicles.by_type(params[:vehicle_type]) if params[:vehicle_type].present? && params[:vehicle_type] != "All"
       @vehicles = @vehicles.with_tag(params[:tag_id]) if params[:tag_id].present?
       @vehicles = @vehicles.with_ratings_above(params[:min_rating].to_f) if params[:min_rating].present?
+      @vehicles = @vehicles.page(params[:page]).per(8)
     end
   end
 
@@ -33,7 +35,6 @@ class VehiclesController < ApplicationController
       flash[:notice] = "Vehicle added successfully!"
       redirect_to driver_vehicles_path
     else
-      flash[:alert] = "Failed to add vehicle"
       render :new, status: :unprocessable_entity
     end
   end
@@ -82,7 +83,7 @@ class VehiclesController < ApplicationController
       vehicles = vehicles.select { |v| v.average_rating.to_f >= params[:min_rating].to_f }
     end
 
-    @vehicles = vehicles
+    @vehicles = Kaminari.paginate_array(vehicles).page(params[:page]).per(8)
   end
 
 

@@ -1,0 +1,15 @@
+<nav class="flex justify-center mt-6 text-sm" role="navigation" aria-label="Pagination Navigation">
+  <ul class="inline-flex items-center space-x-1 list-none">
+    <% paginator.each_page do |page| %>
+      <% if page.current? %>
+        <li>
+          <span class="px-3 py-1 rounded bg-blue-600 text-white font-semibold"><%= page.number %></span>
+        </li>
+      <% else %>
+        <li>
+          <%= link_to page.number, url_for(page: page.number), class: "px-3 py-1 rounded border text-gray-700 hover:bg-gray-100" %>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+</nav>

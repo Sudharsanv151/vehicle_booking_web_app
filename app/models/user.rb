@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  acts_as_paranoid
   
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
@@ -21,6 +22,24 @@ class User < ApplicationRecord
 
   before_validation :normalize_email_and_mobile
   before_create :assign_welcome_reward
+
+  def self.ransackable_attributes(auth_object = nil)
+    [
+      "id",
+      "name",
+      "email",
+      "mobile_no",
+      "userable_type",
+      "userable_id",
+      "created_at",
+      "updated_at"
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    ["userable"]
+  end
+
 
   def driver?
     userable_type == 'Driver'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_27_093447) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_30_091656) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -83,6 +83,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_27_093447) do
     t.datetime "updated_at", null: false
     t.float "proposed_price"
     t.boolean "customer_accepted", default: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_bookings_on_deleted_at"
     t.index ["user_id"], name: "index_bookings_on_user_id"
     t.index ["vehicle_id"], name: "index_bookings_on_vehicle_id"
   end
@@ -91,12 +93,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_27_093447) do
     t.string "location"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_customers_on_deleted_at"
   end
 
   create_table "drivers", force: :cascade do |t|
     t.string "licence_no"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_drivers_on_deleted_at"
   end
 
   create_table "payments", force: :cascade do |t|
@@ -116,6 +122,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_27_093447) do
     t.bigint "rateable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_ratings_on_deleted_at"
     t.index ["rateable_type", "rateable_id"], name: "index_ratings_on_rateable"
     t.index ["user_id"], name: "index_ratings_on_user_id"
   end
@@ -158,6 +166,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_27_093447) do
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
     t.string "password"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["userable_type", "userable_id"], name: "index_users_on_userable"
   end
@@ -170,6 +180,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_27_093447) do
     t.integer "capacity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_vehicles_on_deleted_at"
     t.index ["driver_id"], name: "index_vehicles_on_driver_id"
   end
 

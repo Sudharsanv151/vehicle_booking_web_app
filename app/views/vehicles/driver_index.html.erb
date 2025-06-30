@@ -70,5 +70,16 @@
         </div>
       <% end %>
     </div>
+    <div class="flex justify-center items-center gap-4 mt-6">
+      <% if @vehicles.prev_page %>
+        <%= link_to "← Prev", url_for(page: @vehicles.prev_page), class: "px-4 py-2 rounded border bg-white text-gray-700 hover:bg-gray-100" %>
+      <% end %>
+
+      <%= paginate @vehicles %>
+
+      <% if @vehicles.next_page %>
+        <%= link_to "Next →", url_for(page: @vehicles.next_page), class: "px-4 py-2 rounded border bg-white text-gray-700 hover:bg-gray-100" %>
+      <% end %>
+    </div>
   <% end %>
 </div>

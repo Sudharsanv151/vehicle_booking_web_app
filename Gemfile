@@ -6,12 +6,7 @@ gem "rails", "~> 7.1.5", ">= 7.1.5.1"
 
 gem "sprockets-rails"
 
-gem 'tailwindcss-rails'
-
 gem "pg", "~> 1.1"
-
-gem "image_processing", "~> 1.12"
-
 
 gem "puma", ">= 5.0"
 
@@ -23,17 +18,25 @@ gem "stimulus-rails"
 
 gem "jbuilder"
 
+gem "tzinfo-data", platforms: %i[ windows jruby ]
+
+gem "bootsnap", require: false
+
+# custom gems
+
 gem 'devise'
 
 gem 'activeadmin'
 
 gem 'sassc-rails'
 
+gem "image_processing", "~> 1.12"
 
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem 'tailwindcss-rails'
 
-gem "bootsnap", require: false
+gem 'paranoia', '~> 2.4'
 
+gem 'kaminari'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ]

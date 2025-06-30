@@ -3,9 +3,8 @@ class BookingsController < ApplicationController
   before_action :set_driver_id, only: [:driver_ongoing, :driver_history, :requests, :propose_price]
 
   def index
-    user = current_user
-    @requested = user.bookings.where(status: false)
-    @ongoing = user.bookings.where(status: true, ride_status: false)
+    @requested = current_user.bookings.where(status: false)
+    @ongoing = current_user.bookings.where(status: true, ride_status: false)
   end
 
   def new
@@ -51,7 +50,7 @@ class BookingsController < ApplicationController
 
   def accept_price
     booking = Booking.find_by(id: params[:id])
-    if BookingNegotiationService.accept_price(booking, session[:user_id])
+    if BookingNegotiationService.accept_price(booking, current_user.id)
       flash[:notice] = "New price accepted!"
     else
       flash[:alert] = "Failed to accept new price"
@@ -82,12 +81,11 @@ class BookingsController < ApplicationController
     @completed = @user.bookings.where(ride_status: true)
   end
 
-  def driver_ongoing
-    @ongoing_bookings = Booking.joins(:vehicle).where(vehicles: { driver_id: @driver_id }, status: true, ride_status: false).includes(:user, :vehicle, :payment)
-  end
-
   def driver_history
     @bookings = Booking.joins(:vehicle).where(vehicles: { driver_id: @driver_id }, ride_status: true)
+  end
+  def driver_ongoing
+    @ongoing_bookings = Booking.joins(:vehicle).where(vehicles: { driver_id: @driver_id }, status: true, ride_status: false).includes(:user, :vehicle, :payment)
   end
 
   def requests

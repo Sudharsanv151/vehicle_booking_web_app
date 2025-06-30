@@ -5,12 +5,12 @@
   <% @completed.each do |booking| %>
     <div class="border border-gray-300 p-4 my-3 rounded-lg shadow-sm bg-white">
 
+      <h4 class="mb-1"><strong class="font-semibold text-gray-800"></strong> <span class="text-gray-700"><strong><%= booking.start_time.strftime('%d-%b-%Y %I:%M %p') %></strong></span></h4>
       <p class="mb-1"><strong class="font-semibold text-gray-800">Vehicle:</strong> <span class="text-gray-700"><%= booking.vehicle.model %></span></p>
       <p class="mb-1"><strong class="font-semibold text-gray-800">Driver:</strong> <span class="text-gray-700"><%= booking.vehicle.driver.user.name %></span></p>
       <p class="mb-1"><strong class="font-semibold text-gray-800">From:</strong> <span class="text-gray-700"><%= booking.start_location %></span></p>
       <p class="mb-1"><strong class="font-semibold text-gray-800">To:</strong> <span class="text-gray-700"><%= booking.end_location %></span></p>
       <p class="mb-1"><strong class="font-semibold text-gray-800">Price:</strong> <span class="text-gray-700">₹<%= booking.price %></span></p>
-      <p class="mb-1"><strong class="font-semibold text-gray-800">Date:</strong> <span class="text-gray-700"><%= booking.booking_date.strftime('%d-%b-%Y %I:%M %p') %></span></p>
       <p class="mb-1"><strong class="font-semibold text-gray-800">Payment:</strong> <span class="text-gray-700">Paid via <%= booking.payment.payment_type %></span></p>
 
       <div class="mt-4 border-t pt-4 border-gray-200 space-y-2">  
