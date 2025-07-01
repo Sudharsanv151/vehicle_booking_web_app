@@ -5,7 +5,8 @@
     <% @completed.each do |booking| %>
       <div class="border border-gray-300 p-4 my-3 rounded-lg shadow-sm bg-white">
         <h4 class="mb-1"><strong class="font-semibold text-gray-800"></strong> 
-          <span class="text-gray-700"><strong><%= booking.start_time.strftime('%d-%b-%Y %I:%M %p') %></strong></span>
+          <span class="text-gray-700"><strong><%= booking.start_time&.strftime('%d-%b-%Y %I:%M %p') || "Not Started" %>
+</strong></span>
         </h4>
         <p class="mb-1"><strong class="font-semibold text-gray-800">Vehicle:</strong> <span class="text-gray-700"><%= booking.vehicle.model %></span></p>
         <p class="mb-1"><strong class="font-semibold text-gray-800">Driver:</strong> <span class="text-gray-700"><%= booking.vehicle.driver.user.name %></span></p>

@@ -78,7 +78,7 @@ class BookingsController < ApplicationController
 
   def customer_history
     @user = current_user
-    @completed = @user.bookings.where(ride_status: true)
+    @completed = current_user.bookings.where(ride_status: true).order(start_time: :desc)
   end
 
   def driver_history

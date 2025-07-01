@@ -2,6 +2,10 @@ ActiveAdmin.register User do
 
   permit_params :name, :email, :mobile_no
 
+  scope :all, default: true
+  scope("Customers") { |users| users.where(userable_type: "Customer") }
+  scope("Drivers")   { |users| users.where(userable_type: "Driver") }
+
   filter :id
   filter :name
   filter :email

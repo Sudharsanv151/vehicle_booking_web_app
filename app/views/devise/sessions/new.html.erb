@@ -24,12 +24,14 @@
       <div class="mb-4">
         <%= f.submit "Log in", class: "w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md shadow" %>
       </div>
-
     <% end %>
+    <%= link_to "Forgot your password?", new_user_password_path, class: "text-blue-600 hover:underline" %>
+
+    
 
     <div class="text-sm text-center mt-4">
       <%= link_to "Don't have an account? Sign up", new_user_registration_path(role: params[:role]), class: "text-blue-600 hover:underline" %>
     </div>
-
+    
   </div>
 </div>

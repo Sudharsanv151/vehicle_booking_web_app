@@ -38,6 +38,12 @@ gem 'paranoia', '~> 2.4'
 
 gem 'kaminari'
 
+gem 'dotenv-rails', groups: [:development, :test]
+
+gem 'omniauth'
+
+gem 'omniauth-github'
+
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ]
 end

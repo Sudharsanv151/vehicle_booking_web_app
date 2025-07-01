@@ -2,7 +2,8 @@ class User < ApplicationRecord
   acts_as_paranoid
   
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable,
+         :omniauthable, omniauth_providers: [:github] 
 
   belongs_to :userable, polymorphic: true
   has_many :bookings, dependent: :destroy
@@ -30,6 +31,15 @@ class User < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
     %w[id name email mobile_no userable_type userable_id created_at updated_at]
   end
+
+  def self.from_omniauth(auth)
+    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+      user.email = auth.info.email
+      user.password = Devise.friendly_token[0, 20]
+      user.name = auth.info.name   # if your user model has name
+    end
+  end
+
 
 
   def driver?
