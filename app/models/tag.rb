@@ -15,6 +15,7 @@ class Tag < ApplicationRecord
   def self.ransackable_associations(auth_object = nil)
     ["vehicles"]
   end
+  
   def usage_count
     vehicles.count
   end

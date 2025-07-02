@@ -1,6 +1,7 @@
 class BookingsController < ApplicationController
   
   before_action :set_driver_id, only: [:driver_ongoing, :driver_history, :requests, :propose_price]
+  before_action :set_booking, only: [:propose_price, :accept_price, :accept, :reject, :finish, :destroy]
 
   def index
     @requested = current_user.bookings.where(status: false)
@@ -9,7 +10,7 @@ class BookingsController < ApplicationController
 
   def new
     @vehicle = Vehicle.find_by(id: params[:vehicle_id])
-    @user=current_user
+    @user = current_user
     @booking = Booking.new
   end
 
@@ -25,9 +26,8 @@ class BookingsController < ApplicationController
   end
 
   def destroy
-    booking = Booking.find_by(id: params[:id])  
-    if booking.user_id == current_user.id && !booking.status
-      booking.destroy
+    if @booking.user_id == current_user.id && !@booking.status
+      @booking.destroy
       flash[:notice] = "Booking cancelled!"
     else
       flash[:alert] = "Cannot cancel booking"
@@ -36,10 +36,9 @@ class BookingsController < ApplicationController
   end
 
   def propose_price
-    booking = Booking.find_by(id: params[:id])
-    if booking.customer_accepted
+    if @booking.customer_accepted
       flash[:alert] = "Customer has already accepted the final price"
-    elsif BookingNegotiationService.propose_price(booking, @driver_id, params[:proposed_price])
+    elsif BookingNegotiationService.propose_price(@booking, @driver_id, params[:proposed_price])
       flash[:notice] = "Proposed new price to customer"
     else
       flash[:alert] = "Failed to propose price"
@@ -47,10 +46,8 @@ class BookingsController < ApplicationController
     redirect_to booking_requests_path
   end
 
-
   def accept_price
-    booking = Booking.find_by(id: params[:id])
-    if BookingNegotiationService.accept_price(booking, current_user.id)
+    if BookingNegotiationService.accept_price(@booking, current_user.id)
       flash[:notice] = "New price accepted!"
     else
       flash[:alert] = "Failed to accept new price"
@@ -59,19 +56,19 @@ class BookingsController < ApplicationController
   end
 
   def accept
-    BookingStatusService.accept(params[:id])
+    BookingStatusService.accept(@booking.id)
     flash[:notice] = "Booking accepted!"
     redirect_to driver_ongoing_path
   end
 
   def reject
-    BookingStatusService.reject(params[:id])
+    BookingStatusService.reject(@booking.id)
     flash[:notice] = "Booking rejected!"
     redirect_to booking_requests_path
   end
 
   def finish
-    BookingStatusService.finish(params[:id])
+    BookingStatusService.finish(@booking.id)
     flash[:notice] = "Ride completed!"
     redirect_to driver_ride_history_path
   end
@@ -84,6 +81,7 @@ class BookingsController < ApplicationController
   def driver_history
     @bookings = Booking.joins(:vehicle).where(vehicles: { driver_id: @driver_id }, ride_status: true)
   end
+
   def driver_ongoing
     @ongoing_bookings = Booking.joins(:vehicle).where(vehicles: { driver_id: @driver_id }, status: true, ride_status: false).includes(:user, :vehicle, :payment)
   end
@@ -92,6 +90,7 @@ class BookingsController < ApplicationController
     @requests = Booking.joins(:vehicle).where(vehicles: { driver_id: @driver_id }, status: false).includes(:user, :vehicle)
   end
 
+  
   private
 
   def booking_params
@@ -100,5 +99,13 @@ class BookingsController < ApplicationController
 
   def set_driver_id
     @driver_id = current_user&.userable&.id
+  end
+
+  def set_booking
+    @booking = Booking.find_by(id: params[:id])
+    unless @booking
+      flash[:alert] = "Booking not found"
+      redirect_back fallback_location: bookings_path
+    end
   end
 end

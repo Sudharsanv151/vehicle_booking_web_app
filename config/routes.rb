@@ -8,6 +8,14 @@ Rails.application.routes.draw do
     omniauth_callbacks: 'users/omniauth_callbacks'
   }
 
+  namespace :api do
+    namespace :v1 do
+      resources :vehicles
+      resources :bookings
+      resources :users
+    end
+  end
+
   root "users#select_role"
 
   get "select_role", to: "users#select_role"

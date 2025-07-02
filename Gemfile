@@ -44,6 +44,11 @@ gem 'omniauth'
 
 gem 'omniauth-github'
 
+gem 'rack-cors'
+
+gem 'devise-jwt'
+
+
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ]
 end

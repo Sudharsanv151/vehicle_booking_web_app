@@ -7,7 +7,7 @@ class Vehicle < ApplicationRecord
   has_and_belongs_to_many :tags
   has_one_attached :image
 
-  validates :image, presence:true
+  # validates :image, presence:true
   validates :vehicle_type, presence:true
   validate :validate_licence_plate
   validate :validate_model
@@ -69,8 +69,11 @@ class Vehicle < ApplicationRecord
       errors.add(:capacity, "can't be blank")
     elsif !capacity.is_a?(Numeric) && capacity.to_s !~ /\A\d+(\.\d+)?\z/
       errors.add(:capacity, "must be a number")
+    elsif capacity.to_f <= 0
+      errors.add(:capacity, "must be greater than 0")
     end
   end
+
 
   def destroy_attaches_image
     image.purge_later if image.attached?
