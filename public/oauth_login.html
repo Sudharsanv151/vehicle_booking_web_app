@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OAuth Login - Ride Booking App</title>
+</head>
+<body>
+  <h2>Login to Get Access Token</h2>
+
+  <form id="loginForm">
+    <label>Email: <input type="email" id="email" required /></label><br><br>
+    <label>Password: <input type="password" id="password" required /></label><br><br>
+    <label>Client ID: <input type="text" id="clientId" required /></label><br><br>
+    <label>Client Secret: <input type="text" id="clientSecret" required /></label><br><br>
+    <button type="submit">Get Token</button>
+  </form>
+
+  <h3>Response:</h3>
+  <pre id="result"></pre>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const clientId = document.getElementById("clientId").value;
+      const clientSecret = document.getElementById("clientSecret").value;
+
+      const params = new URLSearchParams();
+      params.append("grant_type", "password");
+      params.append("username", email);
+      params.append("password", password);
+      params.append("client_id", clientId);
+      params.append("client_secret", clientSecret);
+
+      fetch("http://localhost:3000/oauth/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: params
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+
+        if (data.access_token) {
+          localStorage.setItem("access_token", data.access_token);
+          console.log("Token saved in localStorage");
+        }
+      })
+      .catch(error => {
+        document.getElementById("result").textContent = "Error: " + error;
+      });
+    });
+  </script>
+</body>
+</html>

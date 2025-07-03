@@ -46,7 +46,9 @@ gem 'omniauth-github'
 
 gem 'rack-cors'
 
-gem 'devise-jwt'
+gem 'doorkeeper'
+
+gem 'rabl'
 
 
 group :development, :test do
