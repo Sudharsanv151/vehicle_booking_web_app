@@ -51,9 +51,16 @@ gem 'doorkeeper'
 gem 'rabl'
 
 
+
+
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ]
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'shoulda-matchers'
 end
+
 
 group :development do
   gem "web-console"
@@ -62,4 +69,5 @@ end
 group :test do
   gem "capybara"
   gem "selenium-webdriver"
+  gem 'simplecov', require: false
 end

@@ -10,7 +10,7 @@ class Booking < ApplicationRecord
   validates :start_location, :end_location, :start_time, presence: true
   validate :price_must_be_valid
   validate :start_time_not_past
-  validate :booking_vehicle_exists
+  # validate :booking_vehicle_exists
   validate :user_has_no_conflict, on: :create
 
   
@@ -63,9 +63,9 @@ class Booking < ApplicationRecord
     end
   end
 
-  def booking_vehicle_exists
-    errors.add(:vehicle, "must be valid vehicle") unless Vehicle.exists?(vehicle_id)
-  end
+  # def booking_vehicle_exists
+  #   errors.add(:vehicle, "must be valid vehicle") unless Vehicle.exists?(vehicle_id)
+  # end
 
   def user_has_no_conflict
     return if user.nil?
