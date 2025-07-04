@@ -29,7 +29,11 @@ Doorkeeper.configure do
   # every time somebody will try to access the admin web interface.
   #
   admin_authenticator do
-      authenticate_admin_user!
+    if current_admin_user
+      current_admin_user
+    else
+      redirect_to new_admin_user_session_path
+    end
   end
 
   # You can use your own model classes if you need to extend (or even override) default
