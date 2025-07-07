@@ -10,6 +10,14 @@ class Reward < ApplicationRecord
 
   before_validation :format_reward_type
 
+  def self.ransackable_attributes(auth_object = nil)
+    %w[id user_id points reward_type created_at updated_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[user]
+  end
+
   private
 
   def format_reward_type

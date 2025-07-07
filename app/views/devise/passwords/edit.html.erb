@@ -1,0 +1,35 @@
+<div class="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
+  <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md border border-gray-200">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change your password</h2>
+
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+      <% if resource.errors.any? %>
+        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <h3 class="font-bold mb-2">Please fix the following errors:</h3>
+          <ul class="list-disc list-inside text-sm">
+            <% resource.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%= f.hidden_field :reset_password_token %>
+
+      <div class="mb-4">
+        <%= f.label :password, "New password", class: "block text-sm font-medium text-gray-700" %>
+        <% if @minimum_password_length %>
+          <p class="text-sm text-gray-500 mb-1">(<%= @minimum_password_length %> characters minimum)</p>
+        <% end %>
+        <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm" %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :password_confirmation, "Confirm new password", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm" %>
+      </div>
+
+      <%= f.submit "Change my password", class: "w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md shadow" %>
+    <% end %>
+  </div>
+</div>

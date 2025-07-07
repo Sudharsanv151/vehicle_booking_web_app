@@ -59,10 +59,14 @@
               </h3>
               <p class="text-sm text-gray-700 mb-2 leading-tight">
                 <strong>Driver:</strong> <%= vehicle.driver.user.name %><br>
-                <strong>Rating:</strong> <%= vehicle.average_rating %><br>
+                <% avg = vehicle.average_rating %>
+                <% if avg.is_a?(Numeric) %>
+                  <strong>Average Rating:</strong> <%= avg %>⭐
+                <% else %>
+                  <strong>Average Rating:</strong> <%= avg %>
+                <% end %><br>
                 <strong>Capacity:</strong> <%= vehicle.capacity %>
               </p>
-
               <% if vehicle.tags.any? %>
                 <div class="flex flex-wrap gap-1 mb-3">
                   <% vehicle.tags.each do |tag| %>
@@ -77,6 +81,19 @@
           </div>
         <% end %>
       </div>
+
+      <div class="flex justify-center items-center gap-4 mt-6">
+        <% if @vehicles.prev_page %>
+          <%= link_to "← Prev", url_for(page: @vehicles.prev_page), class: "px-4 py-2 rounded border bg-white text-gray-700 hover:bg-gray-100" %>
+        <% end %>
+
+        <%= paginate @vehicles %>
+
+        <% if @vehicles.next_page %>
+          <%= link_to "Next →", url_for(page: @vehicles.next_page), class: "px-4 py-2 rounded border bg-white text-gray-700 hover:bg-gray-100" %>
+        <% end %>
+      </div>
+
     <% else %>
       <p class="text-gray-600 text-base text-center mt-10 font-medium">No vehicles found for your search or filter.</p>
     <% end %>

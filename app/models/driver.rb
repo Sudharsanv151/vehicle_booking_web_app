@@ -1,5 +1,7 @@
 class Driver < ApplicationRecord
-  has_one :user, as: :userable, dependent: :destroy
+  acts_as_paranoid
+  
+  has_one :user, as: :userable
   has_many :vehicles, dependent: :destroy
   has_many :bookings, through: :vehicles
 
@@ -10,6 +12,13 @@ class Driver < ApplicationRecord
 
   before_validation :normalize_licence
 
+  def self.ransackable_associations(auth_object = nil)
+    %w[bookings user vehicles]
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[id licence_no created_at updated_at]
+  end
 
   def total_completed_rides
     bookings.where(ride_status:true).count
@@ -25,7 +34,6 @@ class Driver < ApplicationRecord
 
 
   private
-
 
   def normalize_licence
     self.licence_no=licence_no.to_s.strip.upcase

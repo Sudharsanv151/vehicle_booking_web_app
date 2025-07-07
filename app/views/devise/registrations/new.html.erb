@@ -1,0 +1,61 @@
+<div class="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
+  <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md border border-gray-200">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+      Register as <%= params[:role] %>
+    </h1>
+
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :post }) do |f| %>
+      <%= hidden_field_tag :role, params[:role] %>
+
+      <% if resource.errors.any? %>
+        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <h3 class="font-bold mb-2">Please fix the following errors:</h3>
+          <ul class="list-disc list-inside text-sm">
+            <% resource.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="mb-4">
+        <%= f.label :name, "Name", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :name, class: "w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm" %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :email, "Email", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.email_field :email, autofocus: true, class: "w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm" %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :mobile_no, "Mobile No", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :mobile_no, class: "w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm" %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :password, "Password", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.password_field :password, class: "w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm" %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :password_confirmation, "Confirm Password", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.password_field :password_confirmation, class: "w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm" %>
+      </div>
+
+      <% if params[:role] == 'customer' %>
+        <div class="mb-4">
+          <%= label_tag :location, "Location", class: "block text-sm font-medium text-gray-700" %>
+          <%= text_field_tag :location, nil, class: "w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm" %>
+        </div>
+      <% else %>
+        <div class="mb-4">
+          <%= label_tag :licence_no, "Licence No", class: "block text-sm font-medium text-gray-700" %>
+          <%= text_field_tag :licence_no, nil, class: "w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm" %>
+        </div>
+      <% end %>
+
+      <%= f.submit "Sign up", class: "w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md shadow" %>
+    <% end %>
+  </div>
+</div>

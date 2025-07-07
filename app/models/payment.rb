@@ -10,6 +10,16 @@ class Payment < ApplicationRecord
 
   before_validation :format_payment_type
 
+  def self.ransackable_attributes(auth_object = nil)
+    %w[booking_id created_at id payment_status payment_type updated_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[booking]
+  end
+
+  private
+
   def format_payment_type
     self.payment_type=payment_type.to_s.strip.capitalize
   end

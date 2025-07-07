@@ -1,4 +1,5 @@
 class VehiclesController < ApplicationController
+  
   before_action :set_vehicle, only: [:edit, :update, :destroy, :ratings, :ride_history]
   before_action :set_driver, only: [:create, :driver_index]
 
@@ -9,13 +10,15 @@ class VehiclesController < ApplicationController
 
     if params[:query].present?
       keyword = params[:query].downcase
-      @vehicles = @vehicles.select do |v|
+      filtered_vehicles = @vehicles.select do |v|
         v.model.downcase.include?(keyword) || v.driver.user.name.downcase.include?(keyword)
       end
+      @vehicles = Kaminari.paginate_array(filtered_vehicles).page(params[:page]).per(8)
     else
       @vehicles = @vehicles.by_type(params[:vehicle_type]) if params[:vehicle_type].present? && params[:vehicle_type] != "All"
       @vehicles = @vehicles.with_tag(params[:tag_id]) if params[:tag_id].present?
       @vehicles = @vehicles.with_ratings_above(params[:min_rating].to_f) if params[:min_rating].present?
+      @vehicles = @vehicles.page(params[:page]).per(8)
     end
   end
 
@@ -32,12 +35,12 @@ class VehiclesController < ApplicationController
       flash[:notice] = "Vehicle added successfully!"
       redirect_to driver_vehicles_path
     else
-      flash[:alert] = "Failed to add vehicle"
       render :new, status: :unprocessable_entity
     end
   end
 
-  def edit; end
+  def edit
+  end
 
   def update
     if @vehicle.update(vehicle_params)
@@ -59,8 +62,30 @@ class VehiclesController < ApplicationController
   end
 
   def driver_index
-    @vehicles = @driver.vehicles
+    @types = Vehicle.distinct.pluck(:vehicle_type).compact
+    @tags = Tag.all
+
+    vehicles = Vehicle.where(driver_id: current_user.userable.id)
+
+    if params[:query].present?
+      vehicles = vehicles.joins(:driver).where("vehicles.model ILIKE :q", q: "%#{params[:query]}%")
+    end
+
+    if params[:vehicle_type].present? && params[:vehicle_type] != "All"
+      vehicles = vehicles.where(vehicle_type: params[:vehicle_type])
+    end
+
+    if params[:tag_id].present?
+      vehicles = vehicles.joins(:tags).where(tags: { id: params[:tag_id] })
+    end
+
+    if params[:min_rating].present?
+      vehicles = vehicles.select { |v| v.average_rating.to_f >= params[:min_rating].to_f }
+    end
+
+    @vehicles = Kaminari.paginate_array(vehicles).page(params[:page]).per(8)
   end
+
 
   def ratings
     @ratings = @vehicle.ratings.includes(:user)
@@ -77,7 +102,7 @@ class VehiclesController < ApplicationController
   end
 
   def set_driver
-    @driver = User.find_by(id: session[:user_id])&.userable
+    @driver = current_user&.userable
   end
 
   def vehicle_params

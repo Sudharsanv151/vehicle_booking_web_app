@@ -13,11 +13,13 @@
 
           <div>
             <% if booking.payment&.payment_status %>
+              <p class="text-green-600 font-semibold italic mb-2">Customer has made the payment.</p>
               <%= button_to "Finish Ride", finish_booking_path(booking), method: :patch, class: "inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md shadow-sm no-underline transition-colors duration-200" %>
             <% else %>
               <p class="text-orange-600 italic">Waiting for customer payment...</p>
             <% end %>
           </div>
+
         </div>
       <% end %>
     </div>

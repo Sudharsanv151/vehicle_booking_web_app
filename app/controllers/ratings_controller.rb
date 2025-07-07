@@ -1,10 +1,14 @@
 class RatingsController < ApplicationController
-  
+
   before_action :set_user_id
-  before_action :check_duplicate,only: :create
+  before_action :set_rating, only: [:edit, :update, :destroy]
+  before_action :check_duplicate, only: :create
 
   def new
-    @rating = Rating.new
+    @rating = Rating.new(
+    rateable_type: params[:rateable_type],
+    rateable_id: params[:rateable_id]
+  )
   end
 
   def create
@@ -13,17 +17,38 @@ class RatingsController < ApplicationController
 
     if @rating.save
       flash[:notice] = "Rating submitted successfully!"
-      Reward.create(user_id: @rating.user_id, points: 10, reward_type: "Rating Bonus")
-      redirect_to bookings_path
+      redirect_back fallback_location: customer_ride_history_path
     else
       render :new, status: :unprocessable_entity
     end
   end
 
+  def edit
+  end
+
+  def update
+    if @rating.update(rating_params)
+      flash[:notice] = "Rating updated successfully!"
+      redirect_back fallback_location: customer_ride_history_path
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @rating.destroy
+    flash[:notice] = "Rating deleted successfully!"
+    redirect_back fallback_location: customer_ride_history_path
+  end
+
   private
 
   def set_user_id
-    @user_id = session[:user_id]
+    @user_id = current_user.id
+  end
+
+  def set_rating
+    @rating = Rating.find(params[:id])
   end
 
   def check_duplicate

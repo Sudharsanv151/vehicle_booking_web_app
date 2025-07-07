@@ -1,8 +1,18 @@
 <div class="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
   <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md border border-gray-200">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Rate <%= params[:rateable_type].humanize %></h1>
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">New Rating</h2>
 
     <%= form_with model: @rating, local: true, class: "space-y-5" do |f| %>
+      <% if @rating.errors.any? %>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded text-sm">
+          <ul class="list-disc list-inside mt-2">
+            <% @rating.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
       <%= f.hidden_field :rateable_type, value: params[:rateable_type] %>
       <%= f.hidden_field :rateable_id, value: params[:rateable_id] %>
 
