@@ -26,9 +26,7 @@ class Customer < ApplicationRecord
     rewards.sum(:points)
   end
 
-  def total_completed_rides
-    bookings.where(ride_status:true)
-  end
+  
 
   def name
     user&.name || "undefined"

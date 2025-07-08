@@ -1,9 +1,9 @@
 class Api::V1::VehiclesController < Api::BaseController
 
-  before_action :doorkeeper_authorize!, except: [:index, :show]
+  before_action :doorkeeper_authorize!, except: [:index, :show, :rating, :available]
   before_action :reject_client_token, only: [:create, :update, :destroy]
   before_action :set_driver, only: [:create, :update, :destroy]
-  before_action :set_vehicle, only: [:show, :destroy, :update]
+  before_action :set_vehicle, only: [:show, :update, :destroy, :rating, :current_customer]
 
   def index
     if client_credentials_token? || doorkeeper_token.nil?
@@ -38,7 +38,7 @@ class Api::V1::VehiclesController < Api::BaseController
       render json: @vehicle.errors, status: :unprocessable_entity
     end
   end
-
+  
   def destroy
     @vehicle.destroy
     head :no_content
@@ -49,10 +49,35 @@ class Api::V1::VehiclesController < Api::BaseController
       render "api/v1/vehicles/show"
     else
       render json: @vehicle.errors, status: :unprocessable_entity
-    end  
+    end
   end
 
-  
+ 
+  def available
+    @vehicles = Vehicle.available.order(created_at: :desc)
+    render "api/v1/vehicles/index"
+  end
+
+  def rating
+    average = @vehicle.average_rating
+    ratings = @vehicle.ratings.select(:id, :stars, :comments, :user_id, :created_at)
+
+    render json: { average_rating: average, ratings: ratings }
+  end
+
+  def current_customer
+    unless owns_vehicle?(params[:id]) || client_credentials_token?
+      return render json: { error: "Only the vehicle's driver or a client can access this" }, status: :forbidden
+    end
+
+    customer = @vehicle.current_customer
+
+    if customer
+      render json: customer.as_json(only: [:id, :name, :email, :mobile_no])
+    else
+      render json: { message: "Vehicle is not currently assigned to any active booking" }
+    end
+  end
 
   private
 
@@ -61,6 +86,12 @@ class Api::V1::VehiclesController < Api::BaseController
       render json: { error: "Only users(drivers) can perform this action" }, status: :forbidden
     end
   end
+
+  def owns_vehicle?(vehicle_id)
+    current_user&.userable_type == "Driver" &&
+      current_user.userable.vehicles.exists?(id: vehicle_id)
+  end
+
 
   def set_driver
     if current_user&.userable_type == "Driver"
@@ -73,14 +104,10 @@ class Api::V1::VehiclesController < Api::BaseController
   def set_vehicle
     if driver?
       @vehicle = current_user.userable.vehicles.find_by(id: params[:id])
-      unless @vehicle
-        render json: { error: "Vehicle not found or not owned by you" }, status: :not_found
-      end
+      render json: { error: "Vehicle not found or not owned by you" }, status: :not_found unless @vehicle
     else
       @vehicle = Vehicle.find_by(id: params[:id])
-      unless @vehicle
-        render json: { error: "Vehicle not found" }, status: :not_found
-      end
+      render json: { error: "Vehicle not found" }, status: :not_found unless @vehicle
     end
   end
 

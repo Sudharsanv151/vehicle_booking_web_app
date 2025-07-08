@@ -166,8 +166,8 @@ RSpec.describe Vehicle, type: :model do
       vehicle = create(:vehicle)
       user1 = create(:user)
       user2 = create(:user)
-      create(:booking, vehicle: vehicle, status: true, ride_status: true, approved: true, user: user1) # finished
-      booking = create(:booking, vehicle: vehicle, status: true, ride_status: false, approved: true, user: user2) # ongoing
+      create(:booking, vehicle: vehicle, status: true, ride_status: true, approved: true, user: user1)
+      booking = create(:booking, vehicle: vehicle, status: true, ride_status: false, approved: true, user: user2)
       expect(vehicle.current_customer).to eq(booking.user)
     end
 

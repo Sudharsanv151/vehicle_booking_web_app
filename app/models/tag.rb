@@ -16,9 +16,6 @@ class Tag < ApplicationRecord
     ["vehicles"]
   end
   
-  def usage_count
-    vehicles.count
-  end
 
   private
 
