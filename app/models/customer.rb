@@ -9,7 +9,7 @@ class Customer < ApplicationRecord
   validates :location, presence:true, length:{minimum:3}
   
   scope :with_bookings,->{joins(:bookings).distinct}
-  scope :recent,->{order(created_at:desc)}
+  scope :recent,->{order(created_at: :desc)}
   
   before_validation :format_location
 

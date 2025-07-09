@@ -2,7 +2,7 @@ class Api::V1::BookingsController < Api::BaseController
 
   before_action :doorkeeper_authorize!, except: [:index, :show]
   before_action :reject_client_token, only: [:create, :update]
-  before_action :set_userable, except: [:index]
+  before_action :set_userable
   before_action :set_booking, only: [:show, :update, :customer_info]
 
   def index
@@ -39,6 +39,7 @@ class Api::V1::BookingsController < Api::BaseController
     return forbidden unless customer?
 
     @booking = @userable.bookings.new(booking_params)
+    @booking.user=current_user
     if @booking.save
       render "api/v1/bookings/show", status: :created
     else
@@ -74,11 +75,11 @@ class Api::V1::BookingsController < Api::BaseController
   def pending
     return render json: { error: "Unauthorized" }, status: :unauthorized if doorkeeper_token.nil?
 
-    if driver?
+    if driver? 
       vehicle_ids = @userable.vehicles.pluck(:id)
       @bookings = Booking.where(vehicle_id: vehicle_ids, status: false)
-    else
-      @bookings = Booking.none
+    elsif customer?
+      return forbidden
     end
 
     render "api/v1/bookings/index"
@@ -89,7 +90,7 @@ class Api::V1::BookingsController < Api::BaseController
     return forbidden unless driver?
 
     user = @booking.user
-    render json: user.as_json(only: [:id, :email, :mobile])
+    render json: user.as_json(only: [:id, :email, :mobile_no])
   end
 
 

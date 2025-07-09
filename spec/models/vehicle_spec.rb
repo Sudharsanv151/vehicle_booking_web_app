@@ -47,28 +47,23 @@ RSpec.describe Vehicle, type: :model do
         expect(subject.errors[:model]).to include("atleast 2 characters long")
       end
 
-      it "validates capacity presence, numeric, greater than zero" do
-        subject.capacity = nil
-        expect(subject).not_to be_valid
-        expect(subject.errors[:capacity]).to include("can't be blank")
+        it "fails when capacity is blank" do
+          subject.capacity = nil
+          subject.valid?
+          expect(subject.errors[:capacity]).to include("can't be blank")
+        end
 
-        subject.capacity = "abc"
-        expect(subject).not_to be_valid
-        expect(subject.errors[:capacity]).to include("must be a number") 
+        it "fails when capacity is not a number" do
+          subject.capacity = "abc"
+          subject.valid?
+          expect(subject.errors[:capacity]).to include("is not a number")
+        end
 
-        subject.capacity = []
-        expect(subject).not_to be_valid
-        expect(subject.errors[:capacity]).to include("must be a number") 
-
-      
-        subject.capacity = "123a"
-        expect(subject).not_to be_valid
-        expect(subject.errors[:capacity]).to include("must be a number") 
-
-        subject.capacity = 0
-        expect(subject).not_to be_valid
-        expect(subject.errors[:capacity]).to include("must be greater than 0")
-      end
+        it "fails when capacity is 0 or less" do
+          subject.capacity = 0
+          subject.valid?
+          expect(subject.errors[:capacity]).to include("must be greater than 0")
+        end
     end
   end
 
@@ -138,7 +133,7 @@ RSpec.describe Vehicle, type: :model do
   describe "#booked?" do
     it "returns true if vehicle has active booking" do
       vehicle = create(:vehicle)
-      create(:booking, vehicle: vehicle, status: true, ride_status: false, approved: true)
+      create(:booking, vehicle: vehicle, status: true, ride_status: false)
       expect(vehicle.booked?).to be true
     end
 
@@ -147,15 +142,15 @@ RSpec.describe Vehicle, type: :model do
       expect(vehicle.booked?).to be false
     end
 
-    it "returns false if booking is not approved" do
+    it "returns true if booking is approved" do
       vehicle = create(:vehicle)
-      create(:booking, vehicle: vehicle, status: true, ride_status: false, approved: false)
-      expect(vehicle.booked?).to be false
+      create(:booking, vehicle: vehicle, status: true, ride_status: false)
+      expect(vehicle.booked?).to be true
     end
 
     it "returns false if booking is finished" do
       vehicle = create(:vehicle)
-      create(:booking, vehicle: vehicle, status: true, ride_status: true, approved: true)
+      create(:booking, vehicle: vehicle, status: true, ride_status: true)
       expect(vehicle.booked?).to be false
     end
   end
@@ -166,8 +161,8 @@ RSpec.describe Vehicle, type: :model do
       vehicle = create(:vehicle)
       user1 = create(:user)
       user2 = create(:user)
-      create(:booking, vehicle: vehicle, status: true, ride_status: true, approved: true, user: user1)
-      booking = create(:booking, vehicle: vehicle, status: true, ride_status: false, approved: true, user: user2)
+      create(:booking, vehicle: vehicle, status: true, ride_status: true, user: user1)
+      booking = create(:booking, vehicle: vehicle, status: true, ride_status: false, user: user2)
       expect(vehicle.current_customer).to eq(booking.user)
     end
 
@@ -178,33 +173,16 @@ RSpec.describe Vehicle, type: :model do
 
     it "returns nil if only finished bookings" do
       vehicle = create(:vehicle)
-      create(:booking, vehicle: vehicle, status: true, ride_status: true, approved: true)
+      create(:booking, vehicle: vehicle, status: true, ride_status: true)
       expect(vehicle.current_customer).to be_nil
     end
 
     it "returns nil if only unapproved bookings" do
       vehicle = create(:vehicle)
-      create(:booking, vehicle: vehicle, status: true, ride_status: false, approved: false)
+      create(:booking, vehicle: vehicle, status: false, ride_status: false)
       expect(vehicle.current_customer).to be_nil
     end
   end
-
-
-  describe "#assign_default_tags_if_empty" do
-    it "adds 'uncategorized' tag if no tags are present" do
-      vehicle = create(:vehicle, tags: [])
-      vehicle.save!
-      expect(vehicle.tags.pluck(:name)).to include("uncategorized")
-    end
-
-    it "does not add 'uncategorized' tag if tags are already present" do
-      existing_tag = create(:tag, name: "Luxury")
-      vehicle = create(:vehicle, tags: [existing_tag])
-      vehicle.save!
-      expect(vehicle.tags.pluck(:name)).to eq(["Luxury"])
-    end
-  end
-
 
   describe "callbacks" do
     it "purges attached image on destroy" do

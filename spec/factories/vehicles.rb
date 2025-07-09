@@ -3,7 +3,11 @@ FactoryBot.define do
     association :driver
     vehicle_type { "Car" }
     model { "Innova 2.0" }
-    licence_plate { "TN67AM7897" }
+    sequence(:licence_plate) { |n| "TN67AM#{7897 + n}" }
     capacity { 6 }
+
+    factory :vehicle_without_tag do
+      after(:create) {} # overrides parent callback to avoid tag
+    end
   end
 end

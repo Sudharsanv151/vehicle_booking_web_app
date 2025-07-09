@@ -64,17 +64,21 @@ RSpec.describe Driver, type: :model do
 
   describe "#name" do
     it "returns user's name if present" do
+      driver = create(:driver)
       user = create(:user, userable: driver, name: "Jane Driver")
+
       expect(driver.name).to eq("Jane Driver")
     end
 
     it "returns 'undefined' if user is nil" do
+      driver = create(:driver)
       allow(driver).to receive(:user).and_return(nil)
+
       expect(driver.name).to eq("undefined")
     end
   end
 
-  
+    
   describe "ransackable attributes" do
     it "includes expected searchable fields" do
       expect(Driver.ransackable_attributes).to include(

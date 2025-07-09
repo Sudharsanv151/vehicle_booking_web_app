@@ -60,7 +60,8 @@ RSpec.describe Reward, type: :model do
     let!(:r2) { create(:reward, created_at: 1.day.ago, reward_type: "Bonus") }
 
     it "filters rewards by recent" do
-      expect(Reward.recent).to eq([r2, r1])
+      # expect(Reward.recent).to eq([r2, r1])
+      expect(Reward.where(id: [r1.id, r2.id]).recent).to eq([r2, r1])
     end
 
     it "filters rewards by reward_type" do

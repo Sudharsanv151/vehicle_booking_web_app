@@ -6,6 +6,7 @@ class Api::V1::VehiclesController < Api::BaseController
   before_action :set_vehicle, only: [:show, :update, :destroy, :rating, :current_customer]
 
   def index
+    request.format = :json 
     if client_credentials_token? || doorkeeper_token.nil?
       @vehicles = Vehicle.all.order(created_at: :desc)
     elsif current_user.present?
@@ -26,10 +27,6 @@ class Api::V1::VehiclesController < Api::BaseController
   end
 
   def create
-    if doorkeeper_token.nil?
-      return render json: { error: "Authentication token is required" }, status: :unauthorized
-    end
-
     @vehicle = @driver.vehicles.new(vehicle_params)
 
     if @vehicle.save

@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :booking do
     association :user
-    association :vehicle
+    association :vehicle, factory: :vehicle_without_tag
     start_location { "Chennai" }
     end_location { "Bangalore" }
     price { 1500.0 }

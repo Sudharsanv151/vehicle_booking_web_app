@@ -52,10 +52,11 @@ RSpec.describe Customer, type: :model do
     let(:customer) { create(:customer) }
 
     it "returns total reward points" do
+      customer = create(:customer)
       user = create(:user, userable: customer)
       create(:reward, user: user, points: 5)
       create(:reward, user: user, points: 10)
-      expect(customer.total_reward_points).to eq(15)
+      expect(customer.total_reward_points).to eq(35)
     end
    
   

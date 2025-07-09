@@ -7,7 +7,7 @@ class Rating < ApplicationRecord
   validate :validate_stars
   validate :validate_comments
 
-  scope :recent, ->{order(created_at:desc)}
+  scope :recent, ->{order(created_at: :desc)}
   scope :by_type, ->(type){where(rateable_type:type)}
 
   after_create :reward_user

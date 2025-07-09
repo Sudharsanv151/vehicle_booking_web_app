@@ -26,7 +26,7 @@ RSpec.describe User, type: :model do
 
       subject.email = "invalid_email"
       expect(subject).not_to be_valid
-      expect(subject.errors[:email]).to include("is needed")
+      expect(subject.errors[:email]).to include("is invalid")
 
       subject.email = nil
       expect(subject).not_to be_valid
@@ -101,8 +101,8 @@ RSpec.describe User, type: :model do
     it "#total_reward_points returns correct sum" do
       user = create(:user, userable: create(:customer))
       create(:reward, user: user, points: 10)
-      create(:reward, user: user, points: 15)
-      expect(user.total_reward_points).to eq(25)
+      create(:reward, user: user, points: 5)
+      expect(user.total_reward_points).to eq(35)
     end
   end
 

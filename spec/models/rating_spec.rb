@@ -45,6 +45,7 @@ RSpec.describe Rating, type: :model do
   end
 
   describe "scopes" do
+
     let!(:rating1) { create(:rating, created_at: 1.day.ago) }
     let!(:rating2) { create(:rating, created_at: Time.current) }
 
@@ -56,8 +57,9 @@ RSpec.describe Rating, type: :model do
       vehicle = create(:vehicle)
       user = create(:user)
       vehicle_rating = create(:rating, rateable: vehicle, user: user)
-      create(:rating, rateable_type: "Booking", user: user)
-      
+      booking = create(:booking, user: user, vehicle: vehicle)
+      create(:rating, rateable: booking, user: user)
+
       result = Rating.by_type("Vehicle")
       expect(result).to include(vehicle_rating)
       expect(result.pluck(:rateable_type).uniq).to eq(["Vehicle"])
