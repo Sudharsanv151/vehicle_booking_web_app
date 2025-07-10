@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Customer, type: :model do
 
-  describe "associations" do
-    it "has proper associations", :aggregate_failures do
+  describe "associations", :aggregate_failures do
+    it "has proper associations" do
       expect(described_class.reflect_on_association(:user).macro).to eq(:has_one)
       expect(described_class.reflect_on_association(:bookings).macro).to eq(:has_many)
       expect(described_class.reflect_on_association(:payments).macro).to eq(:has_many)
@@ -11,7 +11,7 @@ RSpec.describe Customer, type: :model do
     end
   end
 
-  describe "validations" do
+  describe "validations" , :aggregate_failures do
     it "validates presence and minimum length of location", :aggregate_failures do
       customer = described_class.new(location: "")
       expect(customer).not_to be_valid
@@ -31,7 +31,7 @@ RSpec.describe Customer, type: :model do
     end
   end
 
-  describe "scopes" do
+  describe "scopes" , :aggregate_failures do
 
     let!(:customer1) { create(:customer, created_at: 2.days.ago) }
     let!(:customer2) { create(:customer, created_at: 1.day.ago) }

@@ -4,7 +4,7 @@ RSpec.describe Driver, type: :model do
 
   let(:driver) { create(:driver, licence_no: " abcd123456 ") }
 
-  describe "associations" do
+  describe "associations", :aggregate_failures do
       it "has proper associations", :aggregate_failures do
         expect(described_class.reflect_on_association(:user).macro).to eq(:has_one)
         expect(described_class.reflect_on_association(:vehicles).macro).to eq(:has_many)
@@ -12,7 +12,7 @@ RSpec.describe Driver, type: :model do
       end
   end
 
-  describe "validations" do
+  describe "validations" , :aggregate_failures do
     it "is valid with a proper licence_no" do
       expect(driver).to be_valid
     end
@@ -35,7 +35,7 @@ RSpec.describe Driver, type: :model do
     end
   end
 
-  describe "scopes" do
+  describe "scopes" , :aggregate_failures do
     it "returns recent drivers in descending order" do
       old_driver = create(:driver, created_at: 3.days.ago)
       new_driver = create(:driver, created_at: 1.hour.ago)

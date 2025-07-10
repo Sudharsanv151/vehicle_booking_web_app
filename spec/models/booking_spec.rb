@@ -11,12 +11,12 @@ RSpec.describe Booking, type: :model do
     end
   end
 
-  describe "validations" do
+  describe "validations" , :aggregate_failures  do
 
     let(:user) { create(:user, userable: create(:customer)) }
     let(:vehicle) { create(:vehicle) }
 
-    it "validates presence", :aggregate_failures do
+    it "validates presence" do
       booking = described_class.new
       expect(booking).not_to be_valid
       expect(booking.errors[:start_location]).to include("can't be blank")
@@ -47,7 +47,7 @@ RSpec.describe Booking, type: :model do
   end
 
 
-  describe "scopes" do
+  describe "scopes" , :aggregate_failures do
     let!(:pending)     { create(:booking, status: false) }
     let!(:approved)    { create(:booking, status: true) }
     let!(:finished)    { create(:booking, ride_status: true) }
@@ -69,7 +69,7 @@ RSpec.describe Booking, type: :model do
     end
   end
 
-  describe "instance methods" do
+  describe "instance methods", :aggregate_failures  do
 
     let(:booking) { build(:booking, price: 100, proposed_price: 120, customer_accepted: false) }
 
