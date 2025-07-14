@@ -1,15 +1,12 @@
 class Api::V1::BookingsController < Api::BaseController
 
-  before_action :doorkeeper_authorize!, except: [:index, :show]
+  before_action :doorkeeper_authorize!
   before_action :reject_client_token, only: [:create, :update, :ongoing, :pending, :customer_info ]
   before_action :set_userable
   before_action :set_booking, only: [:show, :update, :customer_info]
 
   def index
-    if doorkeeper_token.nil?
-      @bookings = Booking.none
-      return render json: { error: "Authentication required" }, status: :unauthorized
-    elsif client_credentials_token?
+    if client_credentials_token?
       @bookings = Booking.all.order(created_at: :desc)
     elsif current_user.present?
       if customer?
@@ -18,18 +15,12 @@ class Api::V1::BookingsController < Api::BaseController
         vehicle_ids = @userable.vehicles.pluck(:id)
         @bookings = Booking.where(vehicle_id: vehicle_ids).order(created_at: :desc)
       end
-    else
-      render json: { error: "Unauthorized" }, status: :unauthorized
-      return
     end
 
     render "api/v1/bookings/index"
   end
 
   def show
-    # if doorkeeper_token.nil?
-    #   return render json: { error: "Authentication required" }, status: :unauthorized
-    # end
     render "api/v1/bookings/show"
   end
 
@@ -56,8 +47,6 @@ class Api::V1::BookingsController < Api::BaseController
   end
 
   def ongoing
-    return render json: {error: "Unauthorized"}, status: :unauthorized if doorkeeper_token.nil?
-
     if customer?
       @bookings = @userable.bookings.where(status: true, ride_status: false)
     elsif driver?
@@ -69,7 +58,6 @@ class Api::V1::BookingsController < Api::BaseController
 
 
   def pending
-    return render json: { error: "Unauthorized" }, status: :unauthorized if doorkeeper_token.nil?
 
     if customer?
       @bookings = @userable.bookings.where(status: false, ride_status: false)

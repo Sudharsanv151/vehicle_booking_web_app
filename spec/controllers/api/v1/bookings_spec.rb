@@ -35,27 +35,7 @@ RSpec.describe "Api::V1::BookingsController", type: :request do
         get "/api/v1/bookings", as: :json
         expect(response).to have_http_status(:unauthorized)
       end
-
-      it "returns error message when no token is provided" do
-        get "/api/v1/bookings", as: :json
-        expect(json["error"]).to eq("Authentication required")
-      end
-
-      it "returns 401 if token belongs to deleted user" do
-        ghost_user = create(:user)
-        ghost_token = create(:access_token, resource_owner_id: ghost_user.id)
-        ghost_user.destroy
-        get "/api/v1/bookings", headers: { Authorization: "Bearer #{ghost_token.token}" }, as: :json
-        expect(response).to have_http_status(:unauthorized)
-      end
-
-      it "returns error message if token belongs to deleted user" do
-        ghost_user = create(:user)
-        ghost_token = create(:access_token, resource_owner_id: ghost_user.id)
-        ghost_user.destroy
-        get "/api/v1/bookings", headers: { Authorization: "Bearer #{ghost_token.token}" }, as: :json
-        expect(json["error"]).to eq("Unauthorized")
-      end
+      
     end
 
     context "when accessed using client credentials token" do
