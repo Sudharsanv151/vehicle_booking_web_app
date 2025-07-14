@@ -7,19 +7,19 @@ class Vehicle < ApplicationRecord
   has_and_belongs_to_many :tags
   has_one_attached :image
 
-  # validates :image, presence:true
   validates :vehicle_type, presence:true
+  validates :capacity, presence: true, numericality: { greater_than: 0 }
   validate :validate_licence_plate
   validate :validate_model
-  validate :validate_capacity
+
 
   scope :by_type, ->(type){where(vehicle_type:type)}
   scope :with_tag, ->(tag_id){joins(:tags).where(tags:{id:tag_id})}
-  scope :available, ->{left_outer_joins(:booking).where(bookings: {status:[nil,false]})}
-  scope :with_ratings_above, ->(stars){join(:ratings).group(:id).having('AVG(ratings.stars) >= ?', stars)}
-  
+  scope :available, ->{left_outer_joins(:bookings).where(bookings: {status:[nil,false]}).or(Vehicle.left_outer_joins(:bookings).where(bookings: {id: nil})).distinct}
+  scope :with_ratings_above, ->(stars){joins(:ratings).group(:id).having('AVG(ratings.stars) >= ?', stars)}
 
-  before_save :assign_default_tags_if_empty
+
+  # before_save :assign_default_tags_if_empty
   after_destroy :destroy_attaches_image
 
 
@@ -63,26 +63,16 @@ class Vehicle < ApplicationRecord
       errors.add(:licence_plate, "format is invalid. Use format: TN67AM7867")
     end
   end
-  
-  def validate_capacity
-    if capacity.blank?
-      errors.add(:capacity, "can't be blank")
-    elsif !capacity.is_a?(Numeric) && capacity.to_s !~ /\A\d+(\.\d+)?\z/
-      errors.add(:capacity, "must be a number")
-    elsif capacity.to_f <= 0
-      errors.add(:capacity, "must be greater than 0")
-    end
-  end
 
 
   def destroy_attaches_image
     image.purge_later if image.attached?
   end
 
-  def assign_default_tags_if_empty
-    if tags.empty?
-      tags << Tag.find_or_create_by(name: "uncategorized")
-    end
-  end
+  # def assign_default_tags_if_empty
+  #   if tags.empty?
+  #     tags << Tag.find_or_create_by(name: "uncategorized")
+  #   end
+  # end
 
 end

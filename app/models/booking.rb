@@ -19,7 +19,6 @@ class Booking < ApplicationRecord
   scope :finished, -> { where(ride_status: true) }
   scope :not_finished, -> { where(ride_status: false) }
   scope :upcoming, -> {where("start_time > ?",Time.current)}
-  scope :past, -> {where("start_time < ?",Time.current)}
   scope :negotiated, ->{where.not(proposed_price:nil)}
   
   

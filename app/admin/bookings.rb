@@ -1,16 +1,21 @@
 ActiveAdmin.register Booking do
-
   permit_params :user_id, :vehicle_id, :start_location, :end_location, :price, :booking_date, :status, :start_time, :end_time, :ride_status, :proposed_price, :customer_accepted
-  
+
   scope :all, default: true
   scope("Completed Rides")  { |bookings| bookings.where(ride_status: true) }
   scope("Ongoing Rides")    { |bookings| bookings.where(status: true, ride_status: false) }
   scope("Pending Requests") { |bookings| bookings.where(status: false) }
   scope("Price Proposed")   { |bookings| bookings.where.not(proposed_price: nil) }
 
+  filter :user_id,
+         as: :select,
+         label: "Customer",
+         collection: -> { User.where(userable_type: "Customer").map { |u| [u.name, u.id] } }
 
-  filter :user_id, as: :select, collection: -> { User.all.map { |u| [u.name, u.id] } }
-  filter :vehicle_id, as: :select, collection: -> { Vehicle.all.map { |v| [v.vehicle_type, v.id] } }
+  filter :vehicle_id,
+         as: :select,
+         collection: -> { Vehicle.all.map { |v| [v.vehicle_type, v.id] } }
+
   filter :start_location
   filter :end_location
   filter :price
@@ -20,7 +25,17 @@ ActiveAdmin.register Booking do
   filter :start_time
   filter :end_time
   filter :created_at
-  
+
+  filter :payment_payment_type,
+         as: :select,
+         label: "Payment Type",
+         collection: -> { Payment.distinct.pluck(:payment_type) }
+
+  filter :payment_payment_status,
+         as: :select,
+         label: "Payment Status",
+         collection: [["Paid", true], ["Unpaid", false]]
+
   index do
     selectable_column
     id_column
@@ -71,5 +86,10 @@ ActiveAdmin.register Booking do
     end
     f.actions
   end
-  
+
+  controller do
+    def scoped_collection
+      super.left_joins(:payment)
+    end
+  end
 end

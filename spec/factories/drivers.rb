@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :driver do
-    licence_no { "DL12345678990909" }
+    sequence(:licence_no) { |n| "LIC#{n.to_s.rjust(11, '0')}" }
   end
 end

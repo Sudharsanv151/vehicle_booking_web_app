@@ -20,14 +20,6 @@ class Driver < ApplicationRecord
     %w[id licence_no created_at updated_at]
   end
 
-  def total_completed_rides
-    bookings.where(ride_status:true).count
-  end
-
-  def total_earnings
-    bookings.where(ride_status:true).sum(:price)
-  end
-
   def name
     user&.name || "undefined"
   end

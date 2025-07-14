@@ -3,23 +3,28 @@ module Api
     
     protect_from_forgery with: :null_session
     
-    before_action :doorkeeper_authorize!
-    
 
     def current_user
-      @current_user ||= User.find(doorkeeper_token.resource_owner_id) if doorkeeper_token
+      return nil unless doorkeeper_token
+      return nil if client_credentials_token?
+
+      @current_user ||= User.find_by(id: doorkeeper_token.resource_owner_id)
     end
 
-    def require_customer!
-      unless current_user&.userable_type=="Customer"
-        render json: {error: "Only customers are allowed to perform this action"}, status: :forbidden
-      end
+    def client_credentials_token?
+      doorkeeper_token&.application.present? && doorkeeper_token&.resource_owner_id.nil?
     end
 
-    def require_driver!
-      unless current_user&.userable_type=="Driver"
-        render json: {error: "Only drivers are allowed to perform this action"}, status: :forbidden
-      end
+    def customer?
+      current_user&.userable_type == "Customer"
+    end
+
+    def driver?
+      current_user&.userable_type == "Driver"
+    end
+
+    def forbidden
+      render json: { error: "You are not authorized to perform this action" }, status: :forbidden
     end
 
   end

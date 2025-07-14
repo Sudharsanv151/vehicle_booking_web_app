@@ -1,10 +1,14 @@
 FactoryBot.define do
   factory :user do
     name { "John Doe" }
-    email { Faker::Internet.email }
+    sequence(:email) { |n| "user#{n}@example.com" }
     mobile_no { "9876543210" }
     password { "password123" }
-    userable { association(:customer) }
-    userable_type { "Customer" }
+
+    association :userable, factory: :customer
+
+    trait :with_driver do
+      association :userable, factory: :driver
+    end
   end
 end

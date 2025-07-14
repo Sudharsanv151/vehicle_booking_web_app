@@ -11,8 +11,26 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :vehicles
-      resources :bookings
+      resources :vehicles do
+        collection do
+          get :available
+        end
+        member do
+          get :rating
+          get :current_customer
+        end
+      end
+
+      resources :bookings do
+        collection do
+          get :ongoing
+          get :pending
+        end
+        member do
+          get :customer_info
+        end
+      end
+
       resources :users
     end
   end
