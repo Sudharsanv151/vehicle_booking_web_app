@@ -12,6 +12,7 @@ class Booking < ApplicationRecord
   validate :start_time_not_past
   # validate :booking_vehicle_exists
   validate :user_has_no_conflict, on: :create
+  validate :no_conflicting_driver_bookings, on: :create
 
   
   scope :pending, -> { where(status: false) }
@@ -71,6 +72,25 @@ class Booking < ApplicationRecord
     if user.bookings.where("start_time = ?",start_time).exists?
       errors.add(:base, "You already have a booking on same time")
     end 
+  end
+
+  def no_conflicting_driver_bookings
+    return unless vehicle_id && start_time
+
+    vehicle = Vehicle.find_by(id: vehicle_id) 
+    return unless vehicle
+
+    driver_id = vehicle.driver_id
+
+    # All vehicle IDs of this driver
+    driver_vehicle_ids = Vehicle.where(driver_id: driver_id).pluck(:id)
+
+    conflicts = Booking.where(vehicle_id: driver_vehicle_ids, status: true)
+                      .where('ABS(EXTRACT(EPOCH FROM (start_time - ?)) / 3600.0) < 1', start_time)
+
+    if conflicts.exists?
+      errors.add(:base, 'The driver is already booked for this time slot (within 1 hour).')
+    end
   end
 
   def reward_customer_after_completion

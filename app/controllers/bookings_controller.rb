@@ -56,8 +56,11 @@ class BookingsController < ApplicationController
   end
 
   def accept
-    BookingStatusService.accept(@booking.id)
-    flash[:notice] = "Booking accepted!"
+    if BookingStatusService.accept(@booking.id)
+      flash[:notice] = "Booking accepted!"
+    else
+    flash[:alert] = "This driver already has an accepted booking around this time."
+    end
     redirect_to driver_ongoing_path
   end
 
