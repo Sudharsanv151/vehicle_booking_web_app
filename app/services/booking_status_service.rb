@@ -21,15 +21,23 @@ class BookingStatusService
       booking.update(status: true)
     end
 
-    def reject(booking_id)
+    def reject(booking_id, cancelled_by = "driver")
       booking = Booking.find_by(id: booking_id)
-      booking&.update(status: false)
-      Booking.find_by(id: booking_id)&.destroy
+      return unless booking
+
+      booking.update(
+        status: false,
+        cancelled_at: Time.current,
+        cancelled_by: cancelled_by
+      )
     end
+
 
     def finish(booking_id)
       booking = Booking.find_by(id: booking_id)
-      booking&.update(ride_status: true)
+      return false unless booking
+
+      booking.update_columns(ride_status: true, end_time: Time.current)
     end
   end
 end

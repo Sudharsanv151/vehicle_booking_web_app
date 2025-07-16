@@ -156,6 +156,7 @@ GEM
     ffi (1.17.2-x86_64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
     ffi (1.17.2-x86_64-linux-musl)
+    flatpickr (4.6.13.1)
     formtastic (5.0.0)
       actionpack (>= 6.0.0)
     formtastic_i18n (0.7.0)
@@ -467,6 +468,7 @@ DEPENDENCIES
   dotenv-rails
   factory_bot_rails
   faker
+  flatpickr
   image_processing (~> 1.12)
   importmap-rails
   jbuilder

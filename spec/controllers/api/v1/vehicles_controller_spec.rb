@@ -258,7 +258,6 @@ RSpec.describe "Api::V1::Vehicles", type: :request do
 
 
 
-
   describe "GET /api/v1/vehicles/available" do
     let!(:available_vehicle) { create(:vehicle) }
     let!(:unavailable_vehicle) { create(:vehicle) }

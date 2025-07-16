@@ -4,8 +4,8 @@ class BookingsController < ApplicationController
   before_action :set_booking, only: [:propose_price, :accept_price, :accept, :reject, :finish, :destroy]
 
   def index
-    @requested = current_user.bookings.where(status: false)
-    @ongoing = current_user.bookings.where(status: true, ride_status: false)
+    @requested = current_user.bookings.where(status: [nil, false]).where("start_time > ?", Time.current)
+    @ongoing = current_user.bookings.where(status: true, end_time: nil, ride_status: false).order(start_time: :asc)
   end
 
   def new
@@ -26,14 +26,17 @@ class BookingsController < ApplicationController
   end
 
   def destroy
-    if @booking.user_id == current_user.id && !@booking.status
-      @booking.destroy
+    if Time.current < @booking.start_time.in_time_zone - 30.minutes
+      @booking.update(cancelled_by: current_user.userable_type.downcase, cancelled_at: Time.current)
       flash[:notice] = "Booking cancelled!"
     else
-      flash[:alert] = "Cannot cancel booking"
+      flash[:alert] = "Cannot cancel booking within 30 minutes of start time."
     end
-    redirect_to bookings_path
+
+    redirect_back fallback_location: bookings_path
   end
+
+
 
   def propose_price
     if @booking.customer_accepted
@@ -65,15 +68,20 @@ class BookingsController < ApplicationController
   end
 
   def reject
-    BookingStatusService.reject(@booking.id)
+    role = current_user.userable_type.downcase 
+    BookingStatusService.reject(@booking.id, role)
     flash[:notice] = "Booking rejected!"
     redirect_to booking_requests_path
   end
 
+
   def finish
-    BookingStatusService.finish(@booking.id)
-    flash[:notice] = "Ride completed!"
-    redirect_to driver_ride_history_path
+    if BookingStatusService.finish(params[:id])
+      flash[:notice] = "Ride completed!"
+    else
+      flash[:alert] = "Failed to complete ride."
+    end
+    redirect_to driver_ongoing_path
   end
 
   def customer_history

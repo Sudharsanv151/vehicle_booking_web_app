@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_03_043800) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_16_065051) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -84,6 +84,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_03_043800) do
     t.float "proposed_price"
     t.boolean "customer_accepted", default: false
     t.datetime "deleted_at"
+    t.string "cancelled_by"
+    t.datetime "cancelled_at"
     t.index ["deleted_at"], name: "index_bookings_on_deleted_at"
     t.index ["user_id"], name: "index_bookings_on_user_id"
     t.index ["vehicle_id"], name: "index_bookings_on_vehicle_id"

@@ -50,6 +50,9 @@ gem 'doorkeeper'
 
 gem 'rabl'
 
+gem 'flatpickr'
+
+
 
 
 

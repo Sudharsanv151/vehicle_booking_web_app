@@ -7,12 +7,15 @@ class Booking < ApplicationRecord
   has_many :ratings, as: :rateable, dependent: :destroy
   has_one :driver, through: :vehicle
 
+
   validates :start_location, :end_location, :start_time, presence: true
   validate :price_must_be_valid
   validate :start_time_not_past
-  # validate :booking_vehicle_exists
+  validate :end_time_must_be_after_start_time
   validate :user_has_no_conflict, on: :create
   validate :no_conflicting_driver_bookings, on: :create
+  validate :start_and_end_locations_cannot_be_same
+
 
   
   scope :pending, -> { where(status: false) }
@@ -21,8 +24,11 @@ class Booking < ApplicationRecord
   scope :not_finished, -> { where(ride_status: false) }
   scope :upcoming, -> {where("start_time > ?",Time.current)}
   scope :negotiated, ->{where.not(proposed_price:nil)}
+  scope :active, -> { where(cancelled_at: nil) }
+  scope :cancelled, -> { where.not(cancelled_at: nil) }
+
   
-  
+  before_validation :normalize_locations
   after_update :reward_customer_after_completion
   after_destroy :delete_unwanted_ratings
 
@@ -43,6 +49,11 @@ class Booking < ApplicationRecord
     customer_accepted ? proposed_price : price
   end
 
+
+
+
+
+
   private
 
   
@@ -58,39 +69,54 @@ class Booking < ApplicationRecord
   def start_time_not_past
     if start_time.blank?
       errors.add(:start_time, "can't be blank")
-    elsif start_time < Time.current
-      errors.add(:start_time, "can't be in the past")
+    elsif start_time < 15.minutes.from_now
+      errors.add(:start_time, "must be at least 15 minutes from now")
     end
   end
 
-  # def booking_vehicle_exists
-  #   errors.add(:vehicle, "must be valid vehicle") unless Vehicle.exists?(vehicle_id)
-  # end
+  def end_time_must_be_after_start_time
+    return if start_time.blank? || end_time.blank?
+    if end_time <= start_time
+      errors.add(:end_time, "must be after the start time")
+    end
+  end
+
 
   def user_has_no_conflict
     return if user.nil?
-    if user.bookings.where("start_time = ?",start_time).exists?
-      errors.add(:base, "You already have a booking on same time")
-    end 
+
+    if Booking.where(user_id: user.id, status: true)
+              .where('ABS(EXTRACT(EPOCH FROM (start_time - ?)) / 3600.0) < 1', start_time)
+              .exists?
+      errors.add(:base, "You already have a booking within 1 hour of this time")
+    end
   end
 
+  
   def no_conflicting_driver_bookings
-    return unless vehicle_id && start_time
+    return unless vehicle&.driver_id && start_time
 
-    vehicle = Vehicle.find_by(id: vehicle_id) 
-    return unless vehicle
-
-    driver_id = vehicle.driver_id
-
-    # All vehicle IDs of this driver
-    driver_vehicle_ids = Vehicle.where(driver_id: driver_id).pluck(:id)
-
-    conflicts = Booking.where(vehicle_id: driver_vehicle_ids, status: true)
+    conflicts = Booking.joins(:vehicle)
+                      .where(vehicles: { driver_id: vehicle.driver_id })
+                      .where(status: true)
                       .where('ABS(EXTRACT(EPOCH FROM (start_time - ?)) / 3600.0) < 1', start_time)
 
     if conflicts.exists?
-      errors.add(:base, 'The driver is already booked for this time slot (within 1 hour).')
+      errors.add(:base, 'Driver has another booking within 1 hour.')
     end
+  end
+
+
+  def start_and_end_locations_cannot_be_same
+    if start_location.present? && end_location.present? && start_location == end_location
+      errors.add(:end_location, "can't be the same as start location")
+    end
+  end
+
+
+  def normalize_locations
+    self.start_location = start_location.strip.downcase if start_location.present?
+    self.end_location   = end_location.strip.downcase if end_location.present?
   end
 
   def reward_customer_after_completion

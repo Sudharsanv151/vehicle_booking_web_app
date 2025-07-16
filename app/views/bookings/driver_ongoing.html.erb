@@ -1,58 +1,89 @@
 <div class="max-w-7xl mx-auto px-4 py-4 mt-6">
-  <h1 class="text-2xl font-bold text-gray-800 mb-6">Ongoing Rides</h1>
+  <h2 class="text-2xl font-bold mb-4 text-gray-800">Ongoing Rides</h2>
 
   <% if @ongoing_bookings.any? %>
-    <div class="flex flex-col gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <% @ongoing_bookings.each do |booking| %>
-        <div class="bg-white border border-gray-200 rounded-xl shadow-md flex flex-row w-full overflow-hidden hover:shadow-lg transition-shadow duration-200">
-          <div class="w-56 flex-shrink-0 flex flex-col items-center justify-between h-56 bg-gray-50">
-            <div class="flex-1 flex items-center justify-center w-full">
-              <% if booking.vehicle.image.attached? %>
-                <%= image_tag booking.vehicle.image, class: "w-56 h-40 object-cover rounded-l-xl" %>
-              <% else %>
-                <div class="w-56 h-40 bg-gray-100 flex items-center justify-center text-gray-400 rounded-l-xl text-base">
-                  No Image
-                </div>
-              <% end %>
+        <div class="bg-white border border-gray-300 rounded-lg shadow-sm flex flex-col text-sm">
+          <% if booking.vehicle.image.attached? %>
+            <%= image_tag booking.vehicle.image, class: "w-full h-40 object-cover rounded-t-lg" %>
+          <% else %>
+            <div class="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-500 rounded-t-lg text-sm">
+              No Image
             </div>
-          </div>
+          <% end %>
+          <div class="p-4 flex flex-col flex-1">
+            <div class="flex flex-wrap gap-2 mb-2">
+              <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
+                <strong>From:</strong> <%= booking.start_location.humanize %>
+              </span>
+              <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
+                <strong>To:</strong> <%= booking.end_location.humanize %>
+              </span>
+            </div>
 
-          <div class="flex-1 p-6 flex flex-col justify-between">
-            <div>
-              <p class="mb-2 text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <span><%= booking.vehicle.model %></span>
+            <p class="mb-1"><strong class="font-semibold text-gray-800">Vehicle:</strong> <span class="text-gray-700"><%= booking.vehicle.model %></span></p>
+            <p class="mb-1"><strong class="font-semibold text-gray-800">Customer:</strong> <span class="text-gray-700"><%= booking.user.name %></span></p>
+            <p class="mb-1"><strong class="font-semibold text-gray-800">Start:</strong> <span class="text-gray-700"><%= booking.start_time.strftime("%d %b %Y, %I:%M %p") %></span></p>
+            <p class="mb-1"><strong class="font-semibold text-gray-800">Price:</strong> <span class="text-gray-700">₹<%= booking.price %></span></p>
+
+            <% if booking.cancelled_at.present? %>
+              <p class="text-red-600 font-semibold italic mt-2">
+                ❌ Ride cancelled by <%= booking.cancelled_by&.capitalize || "user" %> at <%= booking.cancelled_at.in_time_zone.strftime("%d %b %Y, %I:%M %p") %>
               </p>
-              <p class="mb-1"><strong class="font-semibold text-gray-800">Customer:</strong> <span class="text-gray-700"><%= booking.user.name %></span></p>
-              <div class="flex flex-wrap gap-2 mb-1">
-                <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                  <strong>From:</strong>  <%= booking.start_location.humanize %>
-                </span>
-                <span class="inline-block bg-gray-100 px-2 py-1 rounded text-sm text-gray-600">
-                  <strong>To:</strong>  <%= booking.end_location.humanize %>
-                </span>
-              </div>
-              <p class="mb-1"><strong class="font-semibold text-gray-800">Start:</strong> <span class="text-gray-700"><%= booking.start_time.strftime("%d %b %Y, %I:%M %p") %></span></p>
-              <p class="mb-1"><strong class="font-semibold text-gray-800">Price:</strong> <span class="text-gray-700">₹<%= booking.price %></span></p>
-            </div>
-            <div class="mt-4">
+            <% else %>
               <% if booking.payment&.payment_status %>
-                <p class="text-green-600 font-semibold italic mb-2 flex items-center gap-1">
-                  <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
-                  Customer has made the payment.
-                </p>
-                <%= button_to "Finish Ride", finish_booking_path(booking), method: :patch, class: "inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md shadow-sm no-underline transition-colors duration-200" %>
-              <% else %>
-                <p class="text-orange-600 italic">Waiting for customer payment...</p>
+                <p class="text-green-600 font-semibold italic mt-2">✅ Customer has made the payment.</p>
+                <%= button_to "Finish Ride", finish_booking_path(booking), method: :patch,
+                      class: "bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mt-2" %>
+              <% elsif Time.current >= booking.start_time %>
+                <p class="text-orange-600 italic mt-2">Waiting for customer payment...</p>
               <% end %>
-            </div>
+
+              <% if Time.current < booking.start_time.in_time_zone - 30.minutes %>
+                <%= button_to "Cancel", booking_path(booking), method: :delete,
+                    data: { confirm: "Are you sure you want to cancel this ride?" },
+                    class: "bg-red-600 hover:bg-gray-400 text-white font-semibold py-2 px-3 rounded text-sm mt-2" %>
+              <% else %>
+                <div class="mt-2" id="countdown-container-<%= booking.id %>">
+                  <p class="text-blue-700 font-semibold italic">
+                    🕒 Ride starts in <span id="countdown-<%= booking.id %>">a few minutes</span>
+                  </p>
+                </div>
+
+                <script>
+                  document.addEventListener("DOMContentLoaded", function () {
+                    const countdownEl = document.getElementById("countdown-<%= booking.id %>");
+                    const containerEl = document.getElementById("countdown-container-<%= booking.id %>");
+                    const rideStartTime = new Date("<%= booking.start_time.in_time_zone.iso8601 %>").getTime();
+
+                    setInterval(function () {
+                      const now = new Date().getTime();
+                      const distance = rideStartTime - now;
+
+                      if (distance <= 0) {
+                        containerEl.style.display = "none";
+                      } else {
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        countdownEl.innerText = minutes + " min " + seconds + " sec";
+                      }
+                    }, 1000);
+                  });
+                </script>
+
+
+              <% end %>
+            <% end %>
           </div>
         </div>
       <% end %>
     </div>
   <% else %>
     <div>
-      <p class="text-gray-700 text-md mb-4">No ongoing rides at the moment.</p>
-      <%= link_to "Return to Home", home_path, class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-md shadow-md no-underline transition-colors duration-200" %>
+      <p class="text-gray-700 text-md mb-4">You don’t have any ongoing rides at the moment.</p>
+      <%= link_to "Back to Home", home_path,
+            class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-md shadow-md no-underline transition-colors duration-200" %>
     </div>
   <% end %>
 </div>
