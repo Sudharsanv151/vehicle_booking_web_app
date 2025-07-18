@@ -6,7 +6,7 @@
       <%= form_with url: driver_vehicles_path, method: :get, local: true, class: "flex gap-2 flex-wrap" do %>
         <div>
           <%= label_tag :query, "Search", class: "block text-sm text-gray-700 mb-1" %>
-          <%= text_field_tag :query, params[:query], placeholder: "Model", class: "border border-gray-300 rounded px-3 py-2 text-sm w-56" %>
+          <%= text_field_tag :query, params[:query], placeholder: "Model", class: "border border-gray-300 rounded px-3 py-2 text-sm w-80" %>
         </div>
         <div class="self-end">
           <%= submit_tag "Search", class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-medium" %>
@@ -61,7 +61,7 @@
 
           <h3 class="text-xl font-bold text-gray-800 mb-3 truncate"><%= vehicle.model.capitalize %></h3>
 
-          <div class="flex flex-col space-y-2 mt-auto">
+          <div class="flex flex-col space-y-1 mt-auto">
             <%= link_to "Edit Vehicle", edit_vehicle_path(vehicle), class: "text-blue-600 hover:text-blue-800 font-medium no-underline" %>
             <%= button_to "Delete", vehicle_path(vehicle), method: :delete, form: { onsubmit: "return confirm('Are you sure to delete this vehicle?');", class: "inline" }, class: "text-red-600 hover:text-red-800 font-medium bg-transparent border-none p-0 cursor-pointer text-left" %>
             <%= link_to "View Ratings", vehicle_ratings_path(vehicle), class: "text-gray-600 hover:text-gray-800 font-medium no-underline" %>

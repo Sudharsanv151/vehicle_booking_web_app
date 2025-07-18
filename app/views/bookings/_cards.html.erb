@@ -1,0 +1,121 @@
+<div class="bg-white border border-gray-300 rounded-lg shadow-sm flex flex-col text-sm ">
+  <% if booking.vehicle.image.attached? %>
+    <%= image_tag booking.vehicle.image, class: "w-full h-40 object-cover rounded-t-lg" %>
+  <% else %>
+    <div class="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-500 rounded-t-lg text-sm">
+      No Image
+    </div>
+  <% end %>
+
+  <div class="p-4 flex flex-col flex-1">
+    <div class="flex flex-wrap gap-2 mb-2">
+      <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600"><strong>From:</strong> <%= booking.start_location.humanize %></span>
+      <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600"><strong>To:</strong> <%= booking.end_location.humanize %></span>
+    </div>
+
+    <p class="mb-1"><strong class="text-gray-800">Vehicle:</strong> <%= booking.vehicle.model %></p>
+    <p class="mb-1"><strong class="text-gray-800">Start:</strong> <%= booking.start_time.strftime("%d %b %Y, %I:%M %p") %></p>
+    <p class="mb-1"><strong class="text-gray-800">Driver:</strong> <%= booking.driver.user.name %></p>
+    <p class="mb-1"><strong class="text-gray-800">Price:</strong> ₹<%= booking.price %></p>
+
+    <%# ---------------- STATUS BADGE ---------------- %>
+    <% if booking.cancelled_by.present? %>
+      <span class="mt-2 inline-block bg-red-100 text-red-700  font-semibold px-3 py-1 rounded-full">
+        Cancelled by <%= booking.cancelled_by.capitalize %>  [<%= booking.cancelled_at.in_time_zone.strftime("%d %b %Y, %I:%M %p") %>]
+      </span>
+    <% elsif booking.status %>
+      <span class="mt-2 inline-block bg-green-100 text-green-700 font-semibold px-3 py-1 rounded-full">
+        ✅ Driver accepted the ride.
+      </span>
+    <% elsif booking.customer_accepted? %>
+      <span class="mt-2 inline-block bg-yellow-100 text-blue-700 font-semibold px-3 py-1 rounded-full">
+        ✅ You accepted the price. Waiting for driver to confirm the ride.
+      </span>
+    <% else %>
+      <span class="mt-2 inline-block bg-gray-100 text-blue-700 font-semibold px-3 py-1 rounded-full">
+        Active
+      </span>
+    <% end %>
+
+    <%# ---------------- LOGIC FOR BUTTONS ---------------- %>
+    <% unless booking.cancelled_by.present? %>
+        <% if booking.proposed_price.present? && !booking.customer_accepted? %>
+          <p class="mt-2 text-yellow-700">
+              <strong>Driver Proposed Price:</strong> ₹<%= booking.proposed_price %>
+          </p>
+          <%= button_to "Accept Proposed Price", accept_price_booking_path(booking), method: :patch,
+              class: "bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 mt-2 rounded" %>
+        <% elsif booking.status %>
+            <% if booking.payment.blank? && Time.current >= booking.start_time %>
+                <%# <p class="mt-2 text-green-700 font-semibold">
+                  ✅ Ride in progress. Please make the payment.
+                </p> %>
+                <%= link_to "Make Payment", new_payment_path(booking_id: booking.id),
+                    class: "inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-3 mt-2 rounded text-sm" %>
+            <% end %>
+        <% end %>
+
+
+        <% if Time.current < booking.start_time.in_time_zone - 30.minutes %>
+        <%= button_to "Cancel", booking_path(booking), method: :delete,
+          form: { onsubmit: "return confirm('Are you sure you want to cancel this ride?');" },
+          class: "bg-red-600 hover:bg-gray-400 text-white font-semibold py-2 px-3 rounded text-sm mt-2" %>
+        <% elsif !booking.status%>
+          <%= button_to "Cancel", booking_path(booking), method: :delete,
+              form: { onsubmit: "return confirm('Are you sure you want to cancel this ride?');" },
+              class: "bg-red-600 hover:bg-gray-400 text-white font-semibold py-2 px-3 rounded text-sm mt-2" %>
+        <% end %>
+
+        <% if booking.payment&.payment_status %>
+          <p class="text-green-600 font-semibold italic mt-2">✅ Payment Done!</p>
+
+        <% end %>
+
+        <% if show_countdown && booking.status && Time.current < booking.start_time.in_time_zone && booking.payment.blank? %>
+        <div class="mt-2" id="countdown-container-<%= booking.id %>">
+          <p class="text-blue-700 font-semibold italic">
+            🕒 <span id="countdown-<%= booking.id %>">Starts soon</span>
+          </p>
+        </div>
+
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            const countdownEl = document.getElementById("countdown-<%= booking.id %>");
+            const containerEl = document.getElementById("countdown-container-<%= booking.id %>");
+            const rideStartTime = new Date("<%= booking.start_time.in_time_zone.iso8601 %>").getTime();
+
+            function updateCountdown() {
+              const now = new Date().getTime();
+              const distance = rideStartTime - now;
+
+              if (distance <= 0) {
+                containerEl.style.display = "none";
+                return;
+              }
+
+              const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+              const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+              const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+              let displayText = "";
+
+              if (days >= 1) {
+                displayText = `Starts in ${days} day${days > 1 ? 's' : ''}`;
+              } else if (hours >= 1) {
+                displayText = `Starts in ${hours} hr ${minutes} min`;
+              } else {
+                displayText = `Starts in ${minutes} min ${seconds} sec`;
+              }
+
+              countdownEl.innerText = displayText;
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+          });
+        </script>
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -12,7 +12,7 @@ class BookingStatusService
 
       driver_vehicle_ids = Vehicle.where(driver_id: driver_id).pluck(:id)
 
-      conflicts = Booking.where(vehicle_id: driver_vehicle_ids, status: true)
+      conflicts = Booking.where(vehicle_id: driver_vehicle_ids, status: true, cancelled_by: nil)
                          .where('ABS(EXTRACT(EPOCH FROM (start_time - ?)) / 3600.0) < 1', start_time)
                          .where.not(id: booking.id)
 

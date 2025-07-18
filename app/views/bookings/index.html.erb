@@ -1,154 +1,73 @@
-<div class="max-w-7xl mx-auto px-4 py-4 mt-6">
-  <h2 class="text-2xl font-bold mb-4 text-gray-800">Requested Rides</h2>
-  <div class="lg:col-span-3">
-    <% if @requested.blank? %>
-      <p class="text-gray-700 mb-4">You don't have any requested rides...</p>
-      <%= link_to "Book a ride", vehicles_path, class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded no-underline" %>
+<div class="max-w-7xl mx-auto px-4 py-6 mt-10">
+  <h2 class="text-2xl font-bold text-gray-800 mb-4">Requested Rides</h2>
+
+  <% active_requested = @requested.reject { |b| b.cancelled_by.present? } %>
+  <% cancelled_requested = @requested.select { |b| b.cancelled_by.present? } %>
+
+  <% if active_requested.blank? %>
+    <p class="text-gray-600 mb-4">You don't have any active requested rides.</p>
+  <% else %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+      <%= render partial: 'bookings/cards', collection: active_requested, as: :booking, locals: { show_countdown: false } %>
+    </div>
+    
+  <% end %>
+
+  <% if cancelled_requested.any? %>
+    <details class="mb-6 border border-gray-300 rounded-lg p-4 bg-white">
+      <summary class="cursor-pointer text-blue-600 text-sm font-medium mb-2">
+        Show Rejected Requests (<%= cancelled_requested.count %>)
+      </summary>
+      
+      <div class="mt-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <%= render partial: 'bookings/cards', collection: cancelled_requested, as: :booking %>
+        </div>
+      </div>
+    </details>
+  <% end %>
+
+
+
+  <div class="mt-16">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Booked Rides</h2>
+
+    <% active_ongoing = @ongoing.reject { |b| b.cancelled_by.present? } %>
+    <% cancelled_ongoing = @ongoing.select { |b| b.cancelled_by.present? } %>
+
+    <% if active_ongoing.blank? %>
+      <p class="text-gray-600 mb-4">You don't have any active ongoing rides.</p>
     <% else %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <% @requested.each do |booking| %>
-          <div class="bg-white border border-gray-300 rounded-lg shadow-sm flex flex-col text-sm">
-            <% if booking.vehicle.image.attached? %>
-              <%= image_tag booking.vehicle.image, class: "w-full h-40 object-cover rounded-t-lg" %>
-            <% else %>
-              <div class="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-500 rounded-t-lg text-sm">
-                No Image
-              </div>
-            <% end %>
-            <div class="p-4 flex flex-col flex-1">
-              <div class="flex flex-wrap gap-2 mb-2">
-                <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                  <strong>From:</strong>  <%= booking.start_location.humanize %>
-                </span>
-                <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                  <strong>To:</strong>  <%= booking.end_location.humanize %>
-                </span>
-              </div>
-
-              <p class="mb-1"><strong class="font-semibold text-gray-800">Vehicle:</strong> <span class="text-gray-700"><%= booking.vehicle.model %></span></p>
-              <p class="mb-1"><strong class="font-semibold text-gray-800">Start:</strong> <span class="text-gray-700"><%= booking.start_time.strftime("%d %b %Y, %I:%M %p") %></span></p>
-              <p class="mb-1"><strong class="font-semibold text-gray-800">Driver:</strong> <span class="text-gray-700"><%= booking.driver.user.name %></span></p>
-              <p class="mb-1"><strong class="font-semibold text-gray-800">Price:</strong> <span class="text-gray-700">₹<%= booking.price %></span></p>
-
-              <% if booking.cancelled_by.present? %>
-                <p class="text-red-600 font-semibold italic mt-2">❌ Rejected by <%= booking.cancelled_by.capitalize %></p>
-              <% else %>
-                <% if booking.proposed_price.present? || booking.customer_accepted? %>
-                  <% if booking.proposed_price.present? %>
-                    <p class="mt-2">
-                      <strong class="text-yellow-700">Driver Proposed Price:</strong> ₹<%= booking.proposed_price %>
-                    </p>
-                  <% end %>
-                  <% if booking.customer_accepted? %>
-                    <p class="mt-2 text-green-700 font-semibold">
-                      ✅ You accepted the proposed price. Waiting for driver to confirm...
-                    </p>
-                  <% else %>
-                    <%= button_to "Accept New Price", accept_price_booking_path(booking), method: :patch,
-                        class: "bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 mt-2 rounded" %>
-                  <% end %>
-                <% end %>
-
-                <% if Time.current < booking.start_time.in_time_zone - 30.minutes %>
-                  <%= button_to "Cancel", booking_path(booking), method: :delete,
-                      data: { confirm: "Are you sure you want to cancel this ride?" },
-                      class: "bg-red-600 hover:bg-gray-400 text-white font-semibold py-2 px-3 rounded text-sm mt-2" %>
-                <% end %>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+        <%= render partial: 'bookings/cards', collection: active_ongoing, as: :booking, locals: { show_countdown: true } %>
       </div>
     <% end %>
-  </div>
 
+    <% if cancelled_ongoing.any? %>
+      <details class="mb-6 border border-gray-300 rounded-lg p-4 bg-white">
+        <summary class="cursor-pointer text-blue-600 text-sm font-medium mb-2">
+          Show Cancelled Rides (<%= cancelled_ongoing.count %>)
+        </summary>
 
-  <div class="max-w-7xl mx-auto px-4 py-4 mt-10">
-  <h2 class="text-2xl font-bold mb-4 text-gray-800">Ongoing Rides</h2>
-    <% if @ongoing.any? %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <% @ongoing.each do |booking| %>
-          <div class="bg-white border border-gray-300 rounded-lg shadow-sm flex flex-col text-sm">
-            <% if booking.vehicle.image.attached? %>
-              <%= image_tag booking.vehicle.image, class: "w-full h-40 object-cover rounded-t-lg" %>
-            <% else %>
-              <div class="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-500 rounded-t-lg text-sm">
-                No Image
-              </div>
-            <% end %>
-            <div class="p-4 flex flex-col flex-1">
-              <div class="flex flex-wrap gap-2 mb-2">
-                <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                  <strong>From:</strong> <%= booking.start_location.humanize %>
-                </span>
-                <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                  <strong>To:</strong> <%= booking.end_location.humanize %>
-                </span>
-              </div>
-
-              <p class="mb-1"><strong class="font-semibold text-gray-800">Vehicle:</strong> <span class="text-gray-700"><%= booking.vehicle.model %></span></p>
-              <p class="mb-1"><strong class="font-semibold text-gray-800">Start:</strong> <span class="text-gray-700"><%= booking.start_time.strftime("%d %b %Y, %I:%M %p") %></span></p>
-              <p class="mb-1"><strong class="font-semibold text-gray-800">Driver:</strong> <span class="text-gray-700"><%= booking.driver.user.name %></span></p>
-              <p class="mb-1"><strong class="font-semibold text-gray-800">Price:</strong> <span class="text-gray-700">₹<%= booking.price %></span></p>
-
-              <% if booking.cancelled_by.present? %>
-                <p class="text-red-600 font-semibold italic mt-2">
-                  ❌ Ride cancelled by <%= booking.cancelled_by&.capitalize || "user" %> at <%= booking.cancelled_at.in_time_zone.strftime("%d %b %Y, %I:%M %p") %>
-                </p>
-              <% else %>
-                <% if booking.payment&.payment_status %>
-                  <p class="text-green-600 font-semibold italic mt-2">✅ You have made the payment.</p>
-                  <p class="text-gray-700">Waiting for driver to finish the ride...</p>
-                <% elsif Time.current >= booking.start_time %>
-                  <p class="text-orange-600 italic mt-2">Please complete your payment to start the ride.</p>
-                  <%= link_to "Make Payment", new_payment_path(booking_id: booking.id),
-                        class: "inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-3 mt-2 rounded text-sm" %>
-                <% end %>
-
-                <% if Time.current < booking.start_time.in_time_zone - 30.minutes %>
-                  <%= button_to "Cancel", booking_path(booking), method: :delete,
-                      data: { confirm: "Are you sure you want to cancel this ride?" },
-                      class: "bg-red-600 hover:bg-gray-400 text-white font-semibold py-2 px-3 rounded text-sm mt-2" %>
-                <% else %>
-                  <div class="mt-2" id="countdown-container-<%= booking.id %>">
-                    <p class="text-blue-700 font-semibold italic">
-                      🕒 Ride starts in <span id="countdown-<%= booking.id %>">a few minutes</span>
-                    </p>
-                  </div>
-
-                  <script>
-                    document.addEventListener("DOMContentLoaded", function () {
-                      const countdownEl = document.getElementById("countdown-<%= booking.id %>");
-                      const containerEl = document.getElementById("countdown-container-<%= booking.id %>");
-                      const rideStartTime = new Date("<%= booking.start_time.in_time_zone.iso8601 %>").getTime();
-
-                      setInterval(function () {
-                        const now = new Date().getTime();
-                        const distance = rideStartTime - now;
-
-                        if (distance <= 0) {
-                          containerEl.style.display = "none";
-                        } else {
-                          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                          countdownEl.innerText = minutes + " min " + seconds + " sec";
-                        }
-                      }, 1000);
-                    });
-                  </script>
-                <% end %>
-
-              <% end %>
-            </div>
+        <div class="mt-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <%= render partial: 'bookings/cards', collection: cancelled_ongoing, as: :booking %>
           </div>
-        <% end %>
-      </div>
-    <% else %>
-      <div>
-        <p class="text-gray-700 text-md mb-4">You don't have any ongoing rides right now.</p>
-        <%= link_to "Book a ride", vehicles_path,
-              class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-md shadow-md no-underline transition-colors duration-200" %>
-      </div>
+        </div>
+      </details>
     <% end %>
+
+      <% if active_ongoing.blank? && cancelled_ongoing.blank? %>
+        <%= link_to "Back to Home", home_path,
+              class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded-md shadow-md no-underline transition-colors duration-200" %>
+      <% end %>
+
   </div>
 </div>
+
+
+
+
+
+
+

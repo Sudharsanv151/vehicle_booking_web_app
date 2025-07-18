@@ -85,7 +85,7 @@ class Booking < ApplicationRecord
   def user_has_no_conflict
     return if user.nil?
 
-    if Booking.where(user_id: user.id, status: true)
+    if Booking.where(user_id: user.id, status: true, cancelled_by: nil)
               .where('ABS(EXTRACT(EPOCH FROM (start_time - ?)) / 3600.0) < 1', start_time)
               .exists?
       errors.add(:base, "You already have a booking within 1 hour of this time")
@@ -98,7 +98,7 @@ class Booking < ApplicationRecord
 
     conflicts = Booking.joins(:vehicle)
                       .where(vehicles: { driver_id: vehicle.driver_id })
-                      .where(status: true)
+                      .where(status: true, cancelled_by: nil)
                       .where('ABS(EXTRACT(EPOCH FROM (start_time - ?)) / 3600.0) < 1', start_time)
 
     if conflicts.exists?
