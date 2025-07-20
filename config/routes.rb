@@ -46,7 +46,7 @@ Rails.application.routes.draw do
 
   resources :vehicles do
     get "ratings", to: "vehicles#ratings"
-    get "bookings", to: "vehicles#ride_history"
+    get "bookings", to: "vehicles#ride_history" 
   end
 
   resources :bookings, only: [:new, :create, :index, :destroy] do

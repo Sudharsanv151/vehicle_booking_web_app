@@ -31,7 +31,7 @@
 
             <p class="mb-1"><strong class="font-semibold text-gray-800">Vehicle:</strong> <span class="text-gray-700"><%= booking.vehicle.model %></span></p>
             <p class="mb-1"><strong class="font-semibold text-gray-800">Customer:</strong> <span class="text-gray-700"><%= booking.user.name %></span></p>
-            <p class="mb-1"><strong class="font-semibold text-gray-800">Start:</strong> <span class="text-gray-700"><%= booking.start_time.strftime("%d %b %Y, %I:%M %p") %></span></p>
+            <p class="mb-1"><strong class="font-semibold text-gray-800">Start:</strong> <span class="text-gray-700"><%= booking.start_time %></span></p>
             <p class="mb-1"><strong class="font-semibold text-gray-800">Price:</strong> <span class="text-gray-700">₹<%= booking.price %></span></p>
             <p class="mb-1"><strong class="font-semibold text-gray-800">Mobile:</strong> <span class="text-gray-700"><%= booking.user.mobile_no %></span></p>
 

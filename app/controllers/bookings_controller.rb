@@ -1,4 +1,7 @@
 class BookingsController < ApplicationController
+
+  include BookingLifecycle
+  include BookingView
   
   before_action :set_driver_id, only: [:driver_ongoing, :driver_history, :requests, :propose_price]
   before_action :set_booking, only: [:propose_price, :accept_price, :accept, :reject, :finish, :destroy]
@@ -25,19 +28,6 @@ class BookingsController < ApplicationController
     end
   end
 
-  def destroy
-    if Time.current < @booking.start_time.in_time_zone - 30.minutes
-      @booking.update(cancelled_by: current_user.userable_type.downcase, cancelled_at: Time.current)
-      flash[:notice] = "Booking cancelled!"
-    else
-      flash[:alert] = "Cannot cancel booking within 30 minutes of start time."
-    end
-
-    redirect_back fallback_location: bookings_path
-  end
-
-
-
   def propose_price
     if @booking.customer_accepted
       flash[:alert] = "Customer has already accepted the final price"
@@ -58,48 +48,6 @@ class BookingsController < ApplicationController
     redirect_to bookings_path
   end
 
-  def accept
-    if BookingStatusService.accept(@booking.id)
-      flash[:notice] = "Booking accepted!"
-    else
-    flash[:alert] = "This driver already has an accepted booking around this time."
-    end
-    redirect_to driver_ongoing_path
-  end
-
-  def reject
-    role = current_user.userable_type.downcase 
-    BookingStatusService.reject(@booking.id, role)
-    flash[:notice] = "Booking rejected!"
-    redirect_to booking_requests_path
-  end
-
-
-  def finish
-    if BookingStatusService.finish(params[:id])
-      flash[:notice] = "Ride completed!"
-    else
-      flash[:alert] = "Failed to complete ride."
-    end
-    redirect_to driver_ongoing_path
-  end
-
-  def customer_history
-    @user = current_user
-    @completed = current_user.bookings.where(ride_status: true).order(start_time: :desc).page(params[:page]).per(8)
-  end
-
-  def driver_history
-    @bookings = Booking.joins(:vehicle).where(vehicles: { driver_id: @driver_id }, ride_status: true).page(params[:page]).per(8)
-  end
-
-  def driver_ongoing
-    @ongoing_bookings = Booking.joins(:vehicle).where(vehicles: { driver_id: @driver_id }, status: true, ride_status: false).includes(:user, :vehicle, :payment)
-  end
-
-  def requests
-    @requests = Booking.joins(:vehicle).where(vehicles: { driver_id: @driver_id }, status: false).includes(:user, :vehicle)
-  end
 
   
   private

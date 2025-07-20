@@ -5,21 +5,18 @@
 
   <div class="flex flex-wrap gap-6 justify-center mt-10 max-w-7xl">
     <% if @user.userable_type == "Customer" %>
-      <!-- Book a Trip -->
       <%= link_to vehicles_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl" do %>
         <img src="https://img.icons8.com/color/96/car--v1.png" alt="Book Trip Icon" class="mx-auto mb-4" />
         <h2 class="text-xl font-bold text-gray-600 mb-2">Book a Trip</h2>
         <%# <p class="text-gray-600 text-sm">Browse vehicles and start your journey.</p> %>
       <% end %>
 
-      <!-- My Bookings -->
       <%= link_to bookings_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl" do %>
         <img src="https://img.icons8.com/color/96/timetable.png" alt="Bookings Icon" class="mx-auto mb-4" />
         <h2 class="text-xl font-bold text-gray-600 mb-2">My Bookings</h2>
         <%# <p class="text-gray-600 text-sm">Check your active and past bookings.</p> %>
       <% end %>
 
-      <!-- Ride History -->
       <%= link_to customer_ride_history_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl" do %>
         <img src="https://img.icons8.com/color/96/time-machine.png" alt="History Icon" class="mx-auto mb-4" />
         <h2 class="text-xl font-bold text-gray-600 mb-2">Ride History</h2>
@@ -27,29 +24,24 @@
       <% end %>
 
     <% else %>
-      <!-- Manage Vehicles -->
       <%= link_to driver_vehicles_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl" do %>
         <img src="https://img.icons8.com/?size=100&id=X1dROpaHxxh3&format=png&color=000000" alt="Manage Vehicles Icon" class="mx-auto mb-4" />
         <h2 class="text-xl font-bold text-gray-600 mb-2">Manage Vehicles</h2>
         <%# <p class="text-gray-600 text-sm">Add or edit your listed vehicles.</p> %>
       <% end %>
 
-      <!-- Booking Requests -->
       <%= link_to booking_requests_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl" do %>
         <img src="https://img.icons8.com/?size=100&id=ULeMjbnoKZpi&format=png&color=000000" alt="Booking Requests Icon" class="mx-auto mb-4" />
         <h2 class="text-xl font-bold text-gray-600 mb-2">Ride Requests</h2>
         <%# <p class="text-gray-600 text-sm">View and respond to incoming bookings.</p> %>
       <% end %>
 
-
-      <!-- Ongoing Rides -->
       <%= link_to driver_ongoing_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl flex flex-col justify-between" do %>
         <img src="https://img.icons8.com/color/96/timetable.png" alt="Ongoing Rides Icon" class="mx-auto mb-4 h-24 w-24 object-contain" />
         <h2 class="text-xl font-bold text-gray-600 mb-2">Booked Rides</h2>
         <%# <p class="text-gray-600 text-sm">See your current accepted rides.</p> %>
       <% end %>
 
-      <!-- Ride History -->
       <%= link_to driver_ride_history_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl" do %>
         <img src="https://img.icons8.com/color/96/time-machine.png" alt="Driver Ride History Icon" class="mx-auto mb-4" />
         <h2 class="text-xl font-bold text-gray-600 mb-2">Ride History</h2>

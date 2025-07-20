@@ -1,102 +1,133 @@
-<div class="max-w-7xl mx-auto px-4 py-4">
-  <h1 class="text-2xl font-bold text-gray-900 text-center mb-6">Browse Vehicles</h1>
+<!-- app/views/your_controller/your_action.html.erb -->
 
-  <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
-    <div class="flex flex-wrap gap-4 items-end">
-      <%= form_with url: vehicles_path, method: :get, local: true, class: "flex gap-2 flex-wrap" do %>
-        <div>
-          <%= label_tag :query, "Search", class: "block text-sm text-gray-700 mb-1" %>
-          <%= text_field_tag :query, params[:query], placeholder: "Model or Driver", 
-              class: "border border-gray-300 rounded px-3 py-2 text-sm w-80" %>
-        </div>
-        <div class="self-end">
-          <%= submit_tag "Search", class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-medium" %>
-        </div>
-      <% end %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Vehicles</title>
+  
+  <%#= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
 
+  <div class="max-w-7xl mx-auto px-4 py-4 sm:py-8"> 
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-800 text-center mb-6">Browse Available Vehicles</h1> 
 
-      <%= form_with url: vehicles_path, method: :get, local: true, class: "flex gap-4 flex-wrap" do %>
-        <div>
-          <%= label_tag :vehicle_type, "Type", class: "block text-sm text-gray-700 mb-1" %>
-          <%= select_tag :vehicle_type, options_for_select(@types.unshift("All"), params[:vehicle_type]), include_blank: true,
-              class: "border border-gray-300 rounded px-3 py-2 text-sm w-32" %>
-        </div>
+    
+    <div class="bg-white p-4 rounded-xl shadow-lg border border-gray-100 mb-4"> 
+      <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-3"> 
+        
+        <%= form_with url: vehicles_path, method: :get, local: true, class: "flex flex-wrap gap-2 items-end w-full md:w-auto" do %> 
+          <div class="flex-grow">
+            <%= label_tag :query, "Search by Model or Driver", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= text_field_tag :query, params[:query], placeholder: "e.g., Sedan, John Doe",
+                class: "border border-gray-300 rounded-lg px-3 py-2 text-sm w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" %> 
+          </div>
+          <div>
+            <%= submit_tag "Search", class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 ease-in-out cursor-pointer w-full md:w-auto" %> 
+          </div>
+        <% end %>
 
-        <div>
-          <%= label_tag :tag_id, "Tag", class: "block text-sm text-gray-700 mb-1" %>
-          <%= select_tag :tag_id, options_from_collection_for_select(@tags, :id, :name, params[:tag_id]), include_blank: "All",
-              class: "border border-gray-300 rounded px-3 py-2 text-sm w-32" %>
-        </div>
+        
+        <%= form_with url: vehicles_path, method: :get, local: true, class: "flex flex-wrap gap-2 items-end w-full md:w-auto" do %> 
+          <div>
+            <%= label_tag :vehicle_type, "Type", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= select_tag :vehicle_type, options_for_select(@types.unshift("All"), params[:vehicle_type]), include_blank: true,
+                class: "border border-gray-300 rounded-lg px-3 py-2 text-sm w-32 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" %> 
+          </div>
 
-        <div>
-          <%= label_tag :min_rating, "Min Rating", class: "block text-sm text-gray-700 mb-1" %>
-          <%= number_field_tag :min_rating, params[:min_rating], in: 1..5, step: 0.1,
-              class: "border border-gray-300 rounded px-3 py-2 text-sm w-24" %>
-        </div>
+          <div>
+            <%= label_tag :tag_id, "Tag", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= select_tag :tag_id, options_from_collection_for_select(@tags, :id, :name, params[:tag_id]), include_blank: "All",
+                class: "border border-gray-300 rounded-lg px-3 py-2 text-sm w-32 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" %> 
+          </div>
 
-        <div class="self-end">
-          <%= submit_tag "Filter", class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium" %>
-        </div>
-      <% end %>
-    </div>
-  </div>
+          <div>
+            <%= label_tag :min_rating, "Min Rating", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= number_field_tag :min_rating, params[:min_rating], in: 1..5, step: 0.1,
+                class: "border border-gray-300 rounded-lg px-3 py-2 text-sm w-24 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" %> 
+          </div>
 
-  <div class="lg:col-span-3">
-    <% if @vehicles.any? %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
-        <% @vehicles.each do |vehicle| %>
-          <div class="bg-white w-65  border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition flex flex-col text-sm">
-            <% if vehicle.image.attached? %>
-              <%= image_tag vehicle.image, class: "w-full h-40 object-cover rounded-t-lg" %>
-            <% else %>
-              <div class="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-500 rounded-t-lg text-sm">
-                No Image
-              </div>
-            <% end %>
-
-            <div class="p-3 flex flex-col flex-1">
-              <h3 class="text-base font-semibold text-gray-800 mb-1 leading-snug">
-                <%= vehicle.model %> <span class="text-sm text-gray-500">(<%= vehicle.vehicle_type %>)</span>
-              </h3>
-              <p class="text-sm text-gray-700 mb-2 leading-tight">
-                <strong>Driver:</strong> <%= vehicle.driver.user.name %><br>
-                <% avg = vehicle.average_rating %>
-                <% if avg.is_a?(Numeric) %>
-                  <strong>Average Rating:</strong> <%= avg %>⭐
-                <% else %>
-                  <strong>Average Rating:</strong> <%= avg %>
-                <% end %><br>
-                <strong>Capacity:</strong> <%= vehicle.capacity %>
-              </p>
-              <% if vehicle.tags.any? %>
-                <div class="flex flex-wrap gap-1 mb-3">
-                  <% vehicle.tags.each do |tag| %>
-                    <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium"><%= tag.name %></span>
-                  <% end %>
-                </div>
-              <% end %>
-
-              <%= link_to "Book Now", new_booking_path(vehicle_id: vehicle.id),
-                class: "mt-auto bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded text-sm text-center font-medium" %>
-            </div>
+          <div>
+            <%= submit_tag "Filter", class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 ease-in-out cursor-pointer w-full md:w-auto" %> 
           </div>
         <% end %>
       </div>
+    </div>
 
-      <div class="flex justify-center items-center gap-4 mt-6">
-        <% if @vehicles.prev_page %>
-          <%= link_to "← Prev", url_for(page: @vehicles.prev_page), class: "px-4 py-2 rounded border bg-white text-gray-700 hover:bg-gray-100" %>
-        <% end %>
+    
+    <div class="lg:col-span-3">
+      <% if @vehicles.any? %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4"> 
+          <% @vehicles.each do |vehicle| %>
+            <div class="bg-white w-full border border-gray-200 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition duration-300 ease-in-out flex flex-col text-sm overflow-hidden">
+              <% if vehicle.image.attached? %>
+                <%= image_tag vehicle.image, class: "w-full h-40 object-cover rounded-t-lg" %> 
+              <% else %>
+                <div class="w-full h-40 bg-gray-100 flex flex-col items-center justify-center text-gray-400 rounded-t-lg text-sm"> 
+                  <svg class="w-10 h-10 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                  <span class="font-medium">No Image Available</span>
+                </div>
+              <% end %>
 
-        <%= paginate @vehicles %>
+              <div class="p-3 flex flex-col flex-1"> 
+                <h3 class="text-base font-bold text-gray-800 mb-1 leading-snug"> 
+                  <%= vehicle.model %> <span class="text-sm font-normal text-gray-500">(<%= vehicle.vehicle_type %>)</span>
+                </h3>
+                <p class="text-sm text-gray-700 mb-2 leading-tight">
+                  <strong>Driver:</strong> <%= vehicle.driver.user.name %><br>
+                  <% avg = vehicle.average_rating %>
+                  <% if avg.is_a?(Numeric) %>
+                    <strong>Average Rating:</strong> <%= '⭐' * avg.round %><span class="text-gray-500"> (<%= avg.round(1) %>)</span>
+                  <% else %>
+                    <strong>Average Rating:</strong> Not rated
+                  <% end %><br>
+                  <strong>Capacity:</strong> <%= vehicle.capacity %> Passengers
+                </p>
+                <% if vehicle.tags.any? %>
+                  <div class="flex flex-wrap gap-1 mb-3"> 
+                    <% vehicle.tags.each do |tag| %>
+                      <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium border border-blue-200"><%= tag.name %></span> 
+                    <% end %>
+                  </div>
+                <% end %>
 
-        <% if @vehicles.next_page %>
-          <%= link_to "Next →", url_for(page: @vehicles.next_page), class: "px-4 py-2 rounded border bg-white text-gray-700 hover:bg-gray-100" %>
-        <% end %>
-      </div>
+                <%= link_to "Book Now", new_booking_path(vehicle_id: vehicle.id),
+                  class: "mt-auto bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-lg text-sm text-center font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 ease-in-out" %> 
+              </div>
+            </div>
+          <% end %>
+        </div>
 
-    <% else %>
-      <p class="text-gray-600 text-base text-center mt-10 font-medium">No vehicles found for your search or filter.</p>
-    <% end %>
+        
+        <div class="flex justify-center items-center gap-3 mt-6"> 
+          <% if @vehicles.prev_page %>
+            <%= link_to "← Previous", url_for(page: @vehicles.prev_page), class: "px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:border-gray-400 transition duration-200 font-medium text-sm" %> 
+          <% end %>
+
+          <%= paginate @vehicles %>
+
+          <% if @vehicles.next_page %>
+            <%= link_to "Next →", url_for(page: @vehicles.next_page), class: "px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:border-gray-400 transition duration-200 font-medium text-sm" %> 
+          <% end %>
+        </div>
+
+      <% else %>
+        <p class="text-gray-600 text-base text-center mt-10 font-medium p-3 bg-white rounded-lg shadow-sm border border-gray-200"> 
+          <svg class="mx-auto h-10 w-10 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          No vehicles found matching your criteria. Try adjusting your search or filters.
+        </p>
+      <% end %>
+    </div>
   </div>
-</div>
+</body>
+</html>
