@@ -23,7 +23,7 @@ class BookingStatusService
 
     def reject(booking_id, cancelled_by = "driver")
       booking = Booking.find_by(id: booking_id)
-      return unless booking
+      return false unless booking
 
       booking.update(
         status: false,
@@ -31,7 +31,6 @@ class BookingStatusService
         cancelled_by: cancelled_by
       )
     end
-
 
     def finish(booking_id)
       booking = Booking.find_by(id: booking_id)

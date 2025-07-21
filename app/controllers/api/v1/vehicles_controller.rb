@@ -19,11 +19,9 @@ class Api::V1::VehiclesController < Api::BaseController
       return render json: { error: "Unauthorized request" }, status: :unauthorized
     end
 
-    render "api/v1/vehicles/index"
   end
 
   def show
-    render "api/v1/vehicles/show"
   end
 
   def create

@@ -16,12 +16,9 @@ class Api::V1::BookingsController < Api::BaseController
         @bookings = Booking.where(vehicle_id: vehicle_ids).order(created_at: :desc)
       end
     end
-
-    render "api/v1/bookings/index"
   end
 
   def show
-    render "api/v1/bookings/show"
   end
 
   def create

@@ -17,8 +17,7 @@ module BookingLifecycle
   end
 
   def accept
-    service = BookingStatusService.new(@booking)
-    if service.accept
+    if BookingStatusService.accept(@booking.id)
       flash[:notice] = "Booking accepted!"
     else
       flash[:alert] = "This driver already has an accepted booking around this time."
