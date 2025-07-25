@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BookingStatusService
   class << self
     def accept(booking_id)
@@ -21,7 +23,7 @@ class BookingStatusService
       booking.update(status: true)
     end
 
-    def reject(booking_id, cancelled_by = "driver")
+    def reject(booking_id, cancelled_by = 'driver')
       booking = Booking.find_by(id: booking_id)
       return false unless booking
 

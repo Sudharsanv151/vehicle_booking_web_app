@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SetDefaultStatusForBookings < ActiveRecord::Migration[7.1]
   def change
     change_column_default :bookings, :status, false

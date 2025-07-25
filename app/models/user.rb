@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   acts_as_paranoid
-  
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
-         :omniauthable, omniauth_providers: [:github] 
+         :omniauthable, omniauth_providers: [:github]
 
   belongs_to :userable, polymorphic: true
   has_many :bookings, dependent: :destroy
@@ -23,12 +25,11 @@ class User < ApplicationRecord
   before_validation :normalize_email_and_mobile
   before_create :assign_welcome_reward
 
-  
-  def self.ransackable_associations(auth_object = nil)
-    ["bookings", "ratings", "rewards", "userable"]
+  def self.ransackable_associations(_auth_object = nil)
+    %w[bookings ratings rewards userable]
   end
 
-  def self.ransackable_attributes(auth_object = nil)
+  def self.ransackable_attributes(_auth_object = nil)
     %w[id name email mobile_no userable_type userable_id created_at updated_at]
   end
 
@@ -36,11 +37,10 @@ class User < ApplicationRecord
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
       user.email = auth.info.email
       user.password = Devise.friendly_token[0, 20]
-      user.name = auth.info.name 
+      user.name = auth.info.name
     end
   end
 
-  
   def driver?
     userable_type == 'Driver'
   end
@@ -56,30 +56,29 @@ class User < ApplicationRecord
   private
 
   def normalize_email_and_mobile
-    if email.blank?
-      errors.add(:email, "is needed")
-    end
-  
+    errors.add(:email, 'is needed') if email.blank?
+
     self.email = email.to_s.strip.downcase
     self.mobile_no = mobile_no.to_s.strip
   end
 
   def assign_welcome_reward
     return unless customer?
-    rewards.build(points: 20, reward_type: "Welcome Reward Bonus")
+
+    rewards.build(points: 20, reward_type: 'Welcome Reward Bonus')
   end
 
   def valid_mobile_no_format
     return if mobile_no.blank?
 
-    unless mobile_no =~ /\A\d{10}\z/
-      errors.add(:mobile_no, "must be exactly 10 digits and only numbers")
-    end
+    return if mobile_no =~ /\A\d{10}\z/
+
+    errors.add(:mobile_no, 'must be exactly 10 digits and only numbers')
   end
 
   def validate_userable_presence
-    if userable.nil? || !(userable.is_a?(Customer) || userable.is_a?(Driver))
-      errors.add(:userable, "must be assigned as a valid Customer or Driver")
-    end
+    return unless userable.nil? || !(userable.is_a?(Customer) || userable.is_a?(Driver))
+
+    errors.add(:userable, 'must be assigned as a valid Customer or Driver')
   end
 end

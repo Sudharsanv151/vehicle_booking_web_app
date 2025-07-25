@@ -1,12 +1,13 @@
-ActiveAdmin.register Vehicle do
+# frozen_string_literal: true
 
+ActiveAdmin.register Vehicle do
   permit_params :model, :vehicle_type, :licence_plate, :driver_id
 
   scope :all, default: true
-  scope("Car")     { |vehicles| vehicles.where(vehicle_type: "Car") }
-  scope("Bike")    { |vehicles| vehicles.where(vehicle_type: "Bike") }
-  scope("Van")     { |vehicles| vehicles.where(vehicle_type: "Van") }
-  scope("Others")  { |vehicles| vehicles.where.not(vehicle_type: ["Car", "Bike", "Van"]) }
+  scope('Car')     { |vehicles| vehicles.where(vehicle_type: 'Car') }
+  scope('Bike')    { |vehicles| vehicles.where(vehicle_type: 'Bike') }
+  scope('Van')     { |vehicles| vehicles.where(vehicle_type: 'Van') }
+  scope('Others')  { |vehicles| vehicles.where.not(vehicle_type: %w[Car Bike Van]) }
 
   filter :id
   filter :model

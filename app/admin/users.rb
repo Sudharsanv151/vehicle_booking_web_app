@@ -1,10 +1,11 @@
-ActiveAdmin.register User do
+# frozen_string_literal: true
 
+ActiveAdmin.register User do
   permit_params :name, :email, :mobile_no
 
   scope :all, default: true
-  scope("Customers") { |users| users.where(userable_type: "Customer") }
-  scope("Drivers")   { |users| users.where(userable_type: "Driver") }
+  scope('Customers') { |users| users.where(userable_type: 'Customer') }
+  scope('Drivers')   { |users| users.where(userable_type: 'Driver') }
 
   filter :id
   filter :name
@@ -13,7 +14,6 @@ ActiveAdmin.register User do
   filter :userable_type
   filter :created_at
 
-
   index do
     selectable_column
     id_column
@@ -21,14 +21,14 @@ ActiveAdmin.register User do
     column :email
     column :mobile_no
     column :userable_type
-    column("Extra Info") do |user|
+    column('Extra Info') do |user|
       case user.userable_type
-      when "Customer"
+      when 'Customer'
         user.userable&.location
-      when "Driver"
+      when 'Driver'
         user.userable&.licence_no
       else
-        "-"
+        '-'
       end
     end
     column :created_at
@@ -43,10 +43,10 @@ ActiveAdmin.register User do
       row :userable_type
       row :created_at
       row :updated_at
-      if user.userable_type == "Customer"
-        row("Location") { user.userable&.location || "-" }
-      elsif user.userable_type == "Driver"
-        row("Licence No") { user.userable&.licence_no || "-" }
+      if user.userable_type == 'Customer'
+        row('Location') { user.userable&.location || '-' }
+      elsif user.userable_type == 'Driver'
+        row('Licence No') { user.userable&.licence_no || '-' }
       end
     end
   end
@@ -61,5 +61,4 @@ ActiveAdmin.register User do
     end
     f.actions
   end
-
 end

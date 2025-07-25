@@ -1,6 +1,7 @@
-class PaymentsController < ApplicationController
+# frozen_string_literal: true
 
-  before_action :set_booking,only: [:new, :create]
+class PaymentsController < ApplicationController
+  before_action :set_booking, only: %i[new create]
 
   def new
     @payment = Payment.new
@@ -11,7 +12,7 @@ class PaymentsController < ApplicationController
     @payment.payment_status = true
 
     if @payment.save
-      redirect_to bookings_path, notice: "Payment success!!"
+      redirect_to bookings_path, notice: 'Payment success!!'
     else
       render :new, status: :unprocessable_entity
     end
@@ -20,7 +21,7 @@ class PaymentsController < ApplicationController
   private
 
   def set_booking
-    @booking =Booking.find_by(id: params[:booking_id] || payment_params[:booking_id])
+    @booking = Booking.find_by(id: params[:booking_id] || payment_params[:booking_id])
   end
 
   def payment_params

@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :booking do
     association :user
     association :vehicle, factory: :vehicle_without_tag
-    start_location { "Chennai" }
-    end_location { "Bangalore" }
+    start_location { 'Chennai' }
+    end_location { 'Bangalore' }
     price { 1500.0 }
     booking_date { 1.day.from_now.to_date }
     start_time { 1.day.from_now + 1.hour }

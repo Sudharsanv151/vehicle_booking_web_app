@@ -1,9 +1,10 @@
-module DriverVehicleAction
+# frozen_string_literal: true
 
+module DriverVehicleAction
   extend ActiveSupport::Concern
 
   included do
-    before_action :set_driver, only: [:create, :driver_index]
+    before_action :set_driver, only: %i[create driver_index]
   end
 
   def create
@@ -11,7 +12,7 @@ module DriverVehicleAction
     @vehicle = service.call
 
     if @vehicle.persisted?
-      flash[:notice] = "Vehicle added successfully!"
+      flash[:notice] = 'Vehicle added successfully!'
       redirect_to driver_vehicles_path
     else
       render :new, status: :unprocessable_entity

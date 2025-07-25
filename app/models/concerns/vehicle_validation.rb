@@ -1,5 +1,6 @@
-module VehicleValidation
+# frozen_string_literal: true
 
+module VehicleValidation
   extend ActiveSupport::Concern
 
   included do
@@ -16,7 +17,7 @@ module VehicleValidation
     if model.blank?
       errors.add(:model, "can't be blank")
     elsif model.length < 2
-      errors.add(:model, "atleast 2 characters long")
+      errors.add(:model, 'atleast 2 characters long')
     end
   end
 
@@ -24,9 +25,9 @@ module VehicleValidation
     if licence_plate.blank?
       errors.add(:licence_plate, "can't be blank")
     elsif Vehicle.where.not(id: id).exists?(licence_plate: licence_plate)
-      errors.add(:licence_plate, "already exists")
+      errors.add(:licence_plate, 'already exists')
     elsif licence_plate !~ /\A[A-Z]{2}\d{2}[A-Z]{2}\d{4}\z/
-      errors.add(:licence_plate, "format is invalid. Use format: TN67AM7867")
+      errors.add(:licence_plate, 'format is invalid. Use format: TN67AM7867')
     end
   end
 
@@ -34,9 +35,9 @@ module VehicleValidation
     if capacity.blank?
       errors.add(:capacity, "can't be blank")
     elsif !capacity.is_a?(Numeric)
-      errors.add(:capacity, "is not a number")
+      errors.add(:capacity, 'is not a number')
     elsif capacity <= 0
-      errors.add(:capacity, "must be greater than 0")
+      errors.add(:capacity, 'must be greater than 0')
     end
   end
 

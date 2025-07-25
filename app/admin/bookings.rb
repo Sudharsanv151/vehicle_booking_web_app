@@ -1,16 +1,19 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Booking do
-  permit_params :user_id, :vehicle_id, :start_location, :end_location, :price, :booking_date, :status, :start_time, :end_time, :ride_status, :proposed_price, :customer_accepted
+  permit_params :user_id, :vehicle_id, :start_location, :end_location, :price, :booking_date, :status, :start_time,
+                :end_time, :ride_status, :proposed_price, :customer_accepted
 
   scope :all, default: true
-  scope("Completed Rides")  { |bookings| bookings.where(ride_status: true) }
-  scope("Ongoing Rides")    { |bookings| bookings.where(status: true, ride_status: false) }
-  scope("Pending Requests") { |bookings| bookings.where(status: false) }
-  scope("Price Proposed")   { |bookings| bookings.where.not(proposed_price: nil) }
+  scope('Completed Rides')  { |bookings| bookings.where(ride_status: true) }
+  scope('Ongoing Rides')    { |bookings| bookings.where(status: true, ride_status: false) }
+  scope('Pending Requests') { |bookings| bookings.where(status: false) }
+  scope('Price Proposed')   { |bookings| bookings.where.not(proposed_price: nil) }
 
   filter :user_id,
          as: :select,
-         label: "Customer",
-         collection: -> { User.where(userable_type: "Customer").map { |u| [u.name, u.id] } }
+         label: 'Customer',
+         collection: -> { User.where(userable_type: 'Customer').map { |u| [u.name, u.id] } }
 
   filter :vehicle_id,
          as: :select,
@@ -28,13 +31,13 @@ ActiveAdmin.register Booking do
 
   filter :payment_payment_type,
          as: :select,
-         label: "Payment Type",
+         label: 'Payment Type',
          collection: -> { Payment.distinct.pluck(:payment_type) }
 
   filter :payment_payment_status,
          as: :select,
-         label: "Payment Status",
-         collection: [["Paid", true], ["Unpaid", false]]
+         label: 'Payment Status',
+         collection: [['Paid', true], ['Unpaid', false]]
 
   index do
     selectable_column
@@ -71,7 +74,7 @@ ActiveAdmin.register Booking do
   end
 
   form do |f|
-    f.inputs "Booking Details" do
+    f.inputs 'Booking Details' do
       f.input :user, as: :select, collection: User.all.map { |u| [u.name, u.id] }
       f.input :vehicle, as: :select, collection: Vehicle.all.map { |v| [v.model, v.id] }
       f.input :start_location

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # require 'rails_helper'
 
 # RSpec.describe UsersController, type: :controller do
@@ -8,7 +10,6 @@
 #   let(:customer_user) { create(:user, userable: customer) }
 #   let(:driver_user)   { create(:user, userable: driver) }
 
-
 #   describe "GET #select_role" do
 #     before { sign_in customer_user }
 
@@ -18,8 +19,6 @@
 #     end
 #   end
 
-
-
 #   describe "GET #profile" do
 #     before do
 #       sign_in customer_user
@@ -28,9 +27,6 @@
 
 #     it("assigns current_user to @user") { expect(assigns(:user)).to eq(customer_user) }
 #   end
-
-
-
 
 #   describe "GET #new" do
 #     context "when role is customer" do
@@ -46,11 +42,9 @@
 #     end
 #   end
 
-
-
 #   describe "POST #create" do
 #     context "when creating a driver" do
-#       let(:driver) { Driver.create!(licence_no: "DL999999979793") } 
+#       let(:driver) { Driver.create!(licence_no: "DL999999979793") }
 #       let(:valid_params) do
 #         {
 #           name: "Alice",
@@ -67,8 +61,6 @@
 #         expect(response).to redirect_to(home_path)
 #       end
 #     end
-
-    
 
 #     context "when creating a customer" do
 #       let(:customer) { Customer.create!(location: "Chennai") }
@@ -90,10 +82,6 @@
 #     end
 #   end
 
-
-
-
-
 #   describe "GET #home" do
 #     context "when signed in" do
 #       before do
@@ -111,10 +99,6 @@
 #     end
 #   end
 
-
-
-
-
 #   describe "GET #edit" do
 #     before do
 #       sign_in customer_user
@@ -123,9 +107,6 @@
 
 #     it("assigns current_user to @user") { expect(assigns(:user)).to eq(customer_user) }
 #   end
-
-
-
 
 #   describe "PATCH #update" do
 #     before { sign_in customer_user }
@@ -167,10 +148,6 @@
 #       it("updates driver licence") { expect(driver_user.userable.reload.licence_no).to eq("NEWLIC123") }
 #     end
 #   end
-
-
-
-
 
 #   describe "DELETE #destroy" do
 #     before { sign_in customer_user }

@@ -1,5 +1,6 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Reward do
-  
   permit_params :user_id, :points, :reward_type
 
   scope :all
@@ -8,7 +9,6 @@ ActiveAdmin.register Reward do
   filter :points
   filter :reward_type
   filter :created_at
-
 
   index do
     selectable_column
@@ -19,7 +19,6 @@ ActiveAdmin.register Reward do
     column :created_at
     actions
   end
-
 
   form do |f|
     f.inputs 'Reward Details' do

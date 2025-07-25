@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddDeletedAtToCustomers < ActiveRecord::Migration[7.1]
   def change
     add_column :customers, :deleted_at, :datetime
