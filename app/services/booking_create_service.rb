@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 class BookingCreateService
   def initialize(params, user)
     @params = params
-    @user =user
+    @user = user
   end
 
   def call
     booking = Booking.new(@params)
-    booking.user=@user
+    booking.user = @user
     booking.booking_date = Time.current
     booking.save
     booking

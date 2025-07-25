@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   use_doorkeeper
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
-  
+
   devise_for :users, controllers: {
     sessions: 'users/sessions',
     registrations: 'users/registrations',
@@ -35,21 +37,21 @@ Rails.application.routes.draw do
     end
   end
 
-  root "users#select_role"
+  root 'users#select_role'
 
-  get "select_role", to: "users#select_role"
-  get "home", to: "users#home"
+  get 'select_role', to: 'users#select_role'
+  get 'home', to: 'users#home'
 
-  resources :users, only: [:new, :create, :edit, :update, :destroy]
-  resources :payments, only: [:new, :create]
-  resources :ratings, only: [:new, :create, :edit, :update, :destroy]
+  resources :users, only: %i[new create edit update destroy]
+  resources :payments, only: %i[new create]
+  resources :ratings, only: %i[new create edit update destroy]
 
   resources :vehicles do
-    get "ratings", to: "vehicles#ratings"
-    get "bookings", to: "vehicles#ride_history"
+    get 'ratings', to: 'vehicles#ratings'
+    get 'bookings', to: 'vehicles#ride_history'
   end
 
-  resources :bookings, only: [:new, :create, :index, :destroy] do
+  resources :bookings, only: %i[new create index destroy] do
     member do
       patch :accept
       patch :reject
@@ -59,11 +61,11 @@ Rails.application.routes.draw do
     end
   end
 
-  get "driver/vehicles", to: "vehicles#driver_index", as: :driver_vehicles
-  get "profile", to: "users#profile", as: :profile
-  get "customer/ride_history", to: "bookings#customer_history", as: :customer_ride_history
-  get "driver/ride_history",   to: "bookings#driver_history",   as: :driver_ride_history
-  get "driver/ongoing",        to: "bookings#driver_ongoing",   as: :driver_ongoing
-  get "booking_requests",      to: "bookings#requests",         as: :booking_requests
-  get "customer/reward_history", to: "rewards#customer_history", as: 'customer_reward_history'
+  get 'driver/vehicles', to: 'vehicles#driver_index', as: :driver_vehicles
+  get 'profile', to: 'users#profile', as: :profile
+  get 'customer/ride_history', to: 'bookings#customer_history', as: :customer_ride_history
+  get 'driver/ride_history',   to: 'bookings#driver_history',   as: :driver_ride_history
+  get 'driver/ongoing',        to: 'bookings#driver_ongoing',   as: :driver_ongoing
+  get 'booking_requests',      to: 'bookings#requests',         as: :booking_requests
+  get 'customer/reward_history', to: 'rewards#customer_history', as: 'customer_reward_history'
 end

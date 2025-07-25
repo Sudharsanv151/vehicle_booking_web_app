@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
@@ -7,7 +9,7 @@ class ApplicationController < ActionController::Base
     if resource.is_a?(AdminUser)
       admin_root_path
     elsif resource.is_a?(User)
-      home_path       
+      home_path
     else
       super
     end
@@ -21,5 +23,4 @@ class ApplicationController < ActionController::Base
       super
     end
   end
-
 end

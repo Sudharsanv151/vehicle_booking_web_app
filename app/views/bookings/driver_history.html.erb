@@ -13,44 +13,57 @@
     <div class="flex flex-col gap-6">
       <% @bookings.each do |booking| %>
         <div class="bg-white border border-gray-200 rounded-xl shadow-md flex flex-row w-full overflow-hidden hover:shadow-lg transition-shadow duration-200">
-          <div class="w-56 flex-shrink-0 flex flex-col items-center justify-between h-56 bg-gray-50">
-            <div class="flex-1 flex items-center justify-center w-full">
+          <div class="w-56 flex-shrink-0 h-full bg-gray-50 border-r border-gray-200 rounded-2xl mt-8">
+            <div class="w-full h-full flex items-center justify-center">
               <% if booking.vehicle.image.attached? %>
-                <%= image_tag booking.vehicle.image, class: "w-56 h-40 object-cover rounded-l-xl" %>
+                <%= image_tag booking.vehicle.image, class: "w-full h-56 object-cover object-center" %>
               <% else %>
-                <div class="w-56 h-40 bg-gray-100 flex items-center justify-center text-gray-400 rounded-l-xl text-base">
+                <div class="w-full h-56 bg-gray-100 flex items-center justify-center text-gray-400 text-base">
                   No Image
                 </div>
               <% end %>
             </div>
           </div>
+
           <div class="flex-1 p-6 flex flex-col justify-between">
             <div>
               <p class="mb-2 text-lg font-semibold text-gray-800 flex items-center gap-2">
                 <span><%= booking.vehicle.model %></span>
               </p>
+
               <p class="mb-1"><strong class="font-semibold text-gray-800">Customer:</strong> <span class="text-gray-700"><%= booking.user.name.capitalize %></span></p>
-              <div class="flex flex-wrap gap-2 mb-1">
-                <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                  <strong>From:</strong>  <%= booking.start_location.humanize %>
-                </span>
-                <span class="inline-block bg-gray-100 px-2 py-1 rounded text-sm text-gray-600">
-                  <strong>To:</strong>  <%= booking.end_location.humanize %>
-                </span>
-              </div>
-              <p class="mb-1">
-                <strong class="font-semibold">Date:</strong>
-                <span class="text-gray-700"><%= booking.start_time.strftime('%d %b %Y, %I:%M %p') %></span>
-              </p>
-              <p class="mb-1">
-                <strong class="font-semibold">Earned:</strong>
-                <span class="font-medium text-green-600">₹<%= booking.price %></span>
-              </p>
+              <p class="mb-1"><strong class="font-semibold text-gray-800">Date:</strong> <span class="text-gray-700"><%= booking.start_time.strftime('%d %b %Y') %></span></p>
+
+              <details class="mt-3">
+                <summary class="text-blue-600 hover:underline cursor-pointer font-medium mb-2">View more details</summary>
+                <div class="mt-2 space-y-1 text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                  <p><strong>From:</strong> <%= booking.start_location.humanize %></p>
+                  <p><strong>To:</strong> <%= booking.end_location.humanize %></p>
+                  <p><strong>Booking Date:</strong> <%= booking.booking_date&.strftime('%d %b %Y') || 'N/A' %></p>
+                  <p><strong>Start Time:</strong> <%= booking.start_time&.strftime('%d %b %Y, %I:%M %p') || 'N/A' %></p>
+                  <p><strong>End Time:</strong> <%= booking.end_time&.strftime('%d %b %Y, %I:%M %p') || 'N/A' %></p>
+
+                  <% if booking.end_time && booking.start_time %>
+                    <% total_seconds = booking.end_time - booking.start_time %>
+                    <% total_minutes = (total_seconds / 60).to_i %>
+                    <% if total_minutes >= 60 %>
+                      <% hours = total_minutes / 60 %>
+                      <% minutes = total_minutes % 60 %>
+                      <p><strong>Total time:</strong> <%= "#{hours}h #{minutes}m" %></p>
+                    <% else %>
+                      <p><strong>Total time:</strong> <%= "#{total_minutes} minutes" %></p>
+                    <% end %>
+                  <% end %>
+
+                  <p><strong>Final Price:</strong> ₹<%= booking.price %></p>
+                </div>
+              </details>
+
               <% ride_rating = booking.ratings.first %>
               <% if ride_rating %>
                 <div class="mt-4 pt-4 border-t border-gray-200">
                   <strong class="font-semibold text-black">Ride rating:</strong>
-                  <span class="ml-1"><%= ride_rating.stars %>⭐</span> - 
+                  <span class="ml-1"><%= ride_rating.stars %>⭐</span> -
                   <span class="ml-1"><%= ride_rating.comments %></span>
                 </div>
               <% else %>
@@ -62,8 +75,12 @@
       <% end %>
     </div>
 
-    <div class="mt-8 text-center">
-      <%= link_to "Back to Home", home_path, class: "inline-block text-blue-600 hover:text-blue-800 font-semibold no-underline text-lg" %>
+    <div class="mt-8 flex justify-center">
+      <%= paginate @bookings%>
     </div>
+<%# 
+    <div class="mt-6 text-center">
+      <%= link_to "Back to Home", home_path, class: "inline-block text-blue-600 hover:text-blue-800 font-semibold no-underline text-lg" %>
+    <%# </div> %>
   <% end %>
 </div>

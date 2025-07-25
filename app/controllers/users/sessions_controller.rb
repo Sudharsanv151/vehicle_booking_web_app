@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Users
   class SessionsController < Devise::SessionsController
     def create
@@ -16,7 +18,7 @@ module Users
         sign_in(resource_name, resource)
         redirect_to after_sign_in_path_for(resource)
       else
-        flash[:alert] = "Invalid email or password."
+        flash[:alert] = 'Invalid email or password.'
         redirect_to new_user_session_path(role: params[:role])
       end
     end

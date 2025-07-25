@@ -11,17 +11,14 @@ Doorkeeper.configure do
     current_user || warden.authenticate!(scope: :user)
   end
 
-  resource_owner_from_credentials do |routes|
+  resource_owner_from_credentials do |_routes|
     user = User.find_for_database_authentication(email: params[:username])
-    if user&.valid_password?(params[:password])
-      user
-    end
+    user if user&.valid_password?(params[:password])
   end
 
   grant_flows %w[password authorization_code client_credentials]
 
   use_refresh_token
-
 
   # If you didn't skip applications controller from Doorkeeper routes in your application routes.rb
   # file then you need to declare this block in order to restrict access to the web interface for
@@ -29,11 +26,7 @@ Doorkeeper.configure do
   # every time somebody will try to access the admin web interface.
   #
   admin_authenticator do
-    if current_admin_user
-      current_admin_user
-    else
-      redirect_to new_admin_user_session_path
-    end
+    current_admin_user || redirect_to(new_admin_user_session_path)
   end
 
   # You can use your own model classes if you need to extend (or even override) default

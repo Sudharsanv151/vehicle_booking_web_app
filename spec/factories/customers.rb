@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :customer do
-    location { "Chennai" }
+    location { 'Chennai' }
   end
 end

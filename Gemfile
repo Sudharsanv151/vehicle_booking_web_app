@@ -1,26 +1,28 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-ruby "3.4.1"
+source 'https://rubygems.org'
 
-gem "rails", "~> 7.1.5", ">= 7.1.5.1"
+ruby '3.4.1'
 
-gem "sprockets-rails"
+gem 'rails', '~> 7.1.5', '>= 7.1.5.1'
 
-gem "pg", "~> 1.1"
+gem 'sprockets-rails'
 
-gem "puma", ">= 5.0"
+gem 'pg', '~> 1.1'
 
-gem "importmap-rails"
+gem 'puma', '>= 5.0'
 
-gem "turbo-rails"
+gem 'importmap-rails'
 
-gem "stimulus-rails"
+gem 'turbo-rails'
 
-gem "jbuilder"
+gem 'stimulus-rails'
 
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem 'jbuilder'
 
-gem "bootsnap", require: false
+gem 'tzinfo-data', platforms: %i[windows jruby]
+
+gem 'bootsnap', require: false
 
 # custom gems
 
@@ -30,7 +32,7 @@ gem 'activeadmin'
 
 gem 'sassc-rails'
 
-gem "image_processing", "~> 1.12"
+gem 'image_processing', '~> 1.12'
 
 gem 'tailwindcss-rails'
 
@@ -38,7 +40,7 @@ gem 'paranoia', '~> 2.4'
 
 gem 'kaminari'
 
-gem 'dotenv-rails', groups: [:development, :test]
+gem 'dotenv-rails', groups: %i[development test]
 
 gem 'omniauth'
 
@@ -50,24 +52,26 @@ gem 'doorkeeper'
 
 gem 'rabl'
 
-
-
+gem 'flatpickr'
 
 group :development, :test do
-  gem "debug", platforms: %i[ mri windows ]
-  gem 'rspec-rails'
+  gem 'brakeman', require: false
+  gem 'debug', platforms: %i[mri windows]
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'rspec-rails'
   gem 'shoulda-matchers'
 end
 
-
 group :development do
-  gem "web-console"
+  gem 'rubocop', require: false
+  gem 'rubocop-rails', require: false
+  gem 'web-console'
 end
 
 group :test do
-  gem "capybara"
-  gem "selenium-webdriver"
+  gem 'capybara'
+  gem 'rails-controller-testing'
+  gem 'selenium-webdriver'
   gem 'simplecov', require: false
 end

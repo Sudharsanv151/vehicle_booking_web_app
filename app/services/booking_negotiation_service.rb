@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BookingNegotiationService
   def self.propose_price(booking, driver_id, new_price)
     return false if booking.customer_accepted?

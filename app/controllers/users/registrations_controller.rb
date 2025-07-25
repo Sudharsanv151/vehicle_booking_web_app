@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 module Users
   class RegistrationsController < Devise::RegistrationsController
-    
     before_action :configure_permitted_parameters, only: [:create]
-    before_action :redirect_if_signed_in, only: [:select_role, :new]
+    before_action :redirect_if_signed_in, only: %i[select_role new]
 
     def select_role
       sign_out(current_user) if user_signed_in?
@@ -24,7 +25,7 @@ module Users
       when 'customer'
         customer = Customer.new(location: params[:location])
         unless customer.save
-          flash.now[:alert] = customer.errors.full_messages.to_sentence.presence || "Customer information is invalid."
+          flash.now[:alert] = customer.errors.full_messages.to_sentence.presence || 'Customer information is invalid.'
           render :new, status: :unprocessable_entity and return
         end
         resource.userable = customer
@@ -32,13 +33,13 @@ module Users
       when 'driver'
         driver = Driver.new(licence_no: params[:licence_no])
         unless driver.save
-          flash.now[:alert] = driver.errors.full_messages.to_sentence.presence || "Driver information is invalid."
+          flash.now[:alert] = driver.errors.full_messages.to_sentence.presence || 'Driver information is invalid.'
           render :new, status: :unprocessable_entity and return
         end
         resource.userable = driver
 
       else
-        flash.now[:alert] = "Invalid role selected."
+        flash.now[:alert] = 'Invalid role selected.'
         render :new, status: :unprocessable_entity and return
       end
 
@@ -46,25 +47,24 @@ module Users
         sign_up(resource_name, resource)
         redirect_to home_path, notice: "Welcome #{resource.name}!"
       else
-        flash.now[:alert] = resource.errors.full_messages.to_sentence.presence || "Signup failed."
+        flash.now[:alert] = resource.errors.full_messages.to_sentence.presence || 'Signup failed.'
         clean_up_passwords resource
         render :new, status: :unprocessable_entity
       end
     end
 
-
     protected
 
-    def after_sign_up_path_for(resource)
+    def after_sign_up_path_for(_resource)
       redirect_to home_path
     end
 
     def redirect_if_signed_in
-      redirect_to home_path, alert: "You are already signed in." if user_signed_in?
+      redirect_to home_path, alert: 'You are already signed in.' if user_signed_in?
     end
 
     def configure_permitted_parameters
-      devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :mobile_no, :location, :licence_no])
+      devise_parameter_sanitizer.permit(:sign_up, keys: %i[name mobile_no location licence_no])
     end
   end
 end

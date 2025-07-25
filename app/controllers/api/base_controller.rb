@@ -1,8 +1,8 @@
+# frozen_string_literal: true
+
 module Api
   class BaseController < ApplicationController
-    
     protect_from_forgery with: :null_session
-    
 
     def current_user
       return nil unless doorkeeper_token
@@ -16,16 +16,15 @@ module Api
     end
 
     def customer?
-      current_user&.userable_type == "Customer"
+      current_user&.userable_type == 'Customer'
     end
 
     def driver?
-      current_user&.userable_type == "Driver"
+      current_user&.userable_type == 'Driver'
     end
 
     def forbidden
-      render json: { error: "You are not authorized to perform this action" }, status: :forbidden
+      render json: { error: 'You are not authorized to perform this action' }, status: :forbidden
     end
-
   end
 end

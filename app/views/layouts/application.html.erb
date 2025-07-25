@@ -9,6 +9,33 @@
 
     <%= stylesheet_link_tag "tailwind", "application", media: "all", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+      document.addEventListener("turbo:load", function () {
+        flatpickr(".datetimepicker", {
+          enableTime: true,
+          dateFormat: "Y-m-d h:i K",     
+          minDate: new Date(Date.now() + 15 * 60000),
+          minuteIncrement: 5,
+          defaultHour: new Date().getHours(),
+          allowInput: true,
+          time_24hr: false,
+          wrap: false,
+          altInput: true,
+          altFormat: "F j, Y h:i K",      
+        });
+      });
+    </script>
+
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
   </head>
 
   <body class="bg-gray-50 min-h-screen">

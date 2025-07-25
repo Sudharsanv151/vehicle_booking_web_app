@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Tag do
-  
   permit_params :name
 
   scope :all
-  
+
   filter :name
   filter :created_at
 
