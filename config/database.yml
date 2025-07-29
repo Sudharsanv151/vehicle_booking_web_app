@@ -79,6 +79,5 @@ test:
 #
 production:
   <<: *default
-  database: vehicle_booking_web_app_production
-  username: vehicle_booking_web_app
-  password: <%= ENV["VEHICLE_BOOKING_WEB_APP_DATABASE_PASSWORD"] %>
+  url: <%= ENV["DATABASE_URL"] %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
