@@ -9,10 +9,9 @@
 
     <%= stylesheet_link_tag "tailwind", "application", media: "all", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
-
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
     <script>
       document.addEventListener("turbo:load", function () {
         flatpickr(".datetimepicker", {
