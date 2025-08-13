@@ -30,5 +30,10 @@ module VehicleBookingWebApp
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # ADD THIS BLOCK TO EXCLUDE SASSC PROCESSOR FROM SPROCKETS
+    config.assets.configure do |env|
+      env.unregister_processor 'text/css', Sprockets::SasscProcessor
+    end
   end
 end

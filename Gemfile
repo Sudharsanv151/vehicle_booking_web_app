@@ -30,7 +30,8 @@ gem 'devise'
 
 gem 'activeadmin'
 
-gem 'sassc-rails'
+# gem 'sassc-rails'
+gem 'dartsass-rails'
 
 gem 'image_processing', '~> 1.12'
 
