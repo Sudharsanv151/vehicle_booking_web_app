@@ -1,52 +1,279 @@
-<div class="flex flex-col justify-center content-center mt-10 bg-gray-50 p-6">
-  <h1 class="text-4xl font-extrabold text-gray-800 mb-10 text-center">
-    Welcome, <span class="text-blue-600"><%= @user.name %></span>!
-  </h1>
 
-  <div class="flex flex-wrap gap-6 justify-center mt-10 max-w-7xl">
+  <script src="https://cdn.tailwindcss.com"></script>
+ <style>
+  .bg-animated {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1e1e3f 0%, #2d1b4e 50%, #1a1a3e 100%);
+    z-index: -10;
+  }
+  
+  .bg-animated::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(72, 118, 255, 0.2) 0%, transparent 50%);
+    animation: pulse 8s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+  }
+  
+  .car {
+    position: fixed;
+    width: 60px;
+    height: 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px 10px 5px 5px;
+    opacity: 0.15;
+    animation: drive 15s linear infinite;
+    z-index: -5;
+  }
+  
+  .car::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 15px;
+    width: 30px;
+    height: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px 8px 0 0;
+  }
+  
+  @keyframes drive {
+    0% { left: -100px; }
+    100% { left: calc(100% + 100px); }
+  }
+  
+  .car:nth-child(1) { top: 20%; animation-duration: 12s; }
+  .car:nth-child(2) { top: 50%; animation-duration: 18s; animation-delay: 3s; opacity: 0.1; }
+  .car:nth-child(3) { top: 75%; animation-duration: 15s; animation-delay: 6s; opacity: 0.12; }
+  
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(120, 119, 198, 0.1));
+    animation: float-orb 20s ease-in-out infinite;
+    opacity: 0.6;
+    z-index: -5;
+  }
+  
+  @keyframes float-orb {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(50px, -50px) scale(1.1); }
+    66% { transform: translate(-30px, 30px) scale(0.9); }
+  }
+  
+  .orb:nth-child(1) { width: 100px; height: 100px; top: 10%; left: 10%; animation-duration: 25s; }
+  .orb:nth-child(2) { width: 150px; height: 150px; top: 60%; right: 15%; animation-duration: 30s; animation-delay: 5s; }
+  .orb:nth-child(3) { width: 80px; height: 80px; bottom: 15%; left: 20%; animation-duration: 20s; animation-delay: 10s; }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+  }
+  
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.4), 0 20px 40px rgba(0, 0, 0, 0.1); }
+    50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.6), 0 25px 50px rgba(0, 0, 0, 0.15); }
+  }
+  
+  .dashboard-card {
+    animation: float 3s ease-in-out infinite;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    min-height: 200px;
+  }
+  
+  .dashboard-card:nth-child(1) { animation-delay: 0s; }
+  .dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+  .dashboard-card:nth-child(3) { animation-delay: 0.4s; }
+  .dashboard-card:nth-child(4) { animation-delay: 0.6s; }
+  .dashboard-card:nth-child(5) { animation-delay: 0.8s; }
+  
+  .dashboard-card:hover {
+    transform: translateY(-12px) scale(1.05);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+    background: rgba(255, 255, 255, 1);
+  }
+  
+  .icon-wrapper {
+    position: relative;
+    display: inline-block;
+    animation: glow 2s ease-in-out infinite;
+  }
+  
+  .dashboard-card:hover .icon-wrapper {
+    animation: none;
+    transform: scale(1.1);
+  }
+  
+  .shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    z-index: 0;
+  }
+  
+  .dashboard-card:hover .shine {
+    animation: shine 0.6s ease-in-out;
+  }
+  
+  @keyframes shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+  
+  .sparkle {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    animation: sparkle 2s infinite;
+    z-index: -5;
+  }
+  
+  @keyframes sparkle {
+    0%, 100% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+  
+  .sparkle:nth-child(1) { top: 15%; left: 15%; animation-delay: 0s; }
+  .sparkle:nth-child(2) { top: 25%; right: 20%; animation-delay: 0.5s; }
+  .sparkle:nth-child(3) { bottom: 30%; left: 25%; animation-delay: 1s; }
+  .sparkle:nth-child(4) { top: 70%; right: 15%; animation-delay: 1.5s; }
+  .sparkle:nth-child(5) { bottom: 20%; right: 30%; animation-delay: 2s; }
+  
+  .gradient-title {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+</style>
+
+<div class="bg-animated">
+  <div class="orb"></div>
+  <div class="orb"></div>
+  <div class="orb"></div>
+</div>
+
+<div class="car"></div>
+<div class="car"></div>
+<div class="car"></div>
+
+<div class="sparkle"></div>
+<div class="sparkle"></div>
+<div class="sparkle"></div>
+<div class="sparkle"></div>
+<div class="sparkle"></div>
+
+<div class="flex flex-col justify-center items-center min-h-screen p-6 relative">
+  <div class="text-center mb-12 mt-8">
+    <h1 class="text-5xl font-black text-white mb-2 drop-shadow-2xl tracking-tight">
+      Welcome, <span class="gradient-title"><%= @user.name %></span>!
+    </h1>
+    <p class="text-lg text-white opacity-80 font-medium drop-shadow-lg">What would you like to do today?</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl w-full pb-16">
     <% if @user.userable_type == "Customer" %>
-      <%= link_to vehicles_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl" do %>
-        <img src="https://img.icons8.com/color/96/car--v1.png" alt="Book Trip Icon" class="mx-auto mb-4" />
-        <h2 class="text-xl font-bold text-gray-600 mb-2">Book a Trip</h2>
-        <%# <p class="text-gray-600 text-sm">Browse vehicles and start your journey.</p> %>
+      
+      <%= link_to vehicles_path, class: "dashboard-card relative rounded-3xl shadow-2xl p-6 text-center overflow-hidden cursor-pointer group no-underline" do %>
+        <div class="shine"></div>
+        <div class="relative z-10 h-full flex flex-col justify-center items-center">
+          <div class="icon-wrapper mb-4 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 p-3 inline-block">
+            <img src="https://img.icons8.com/color/96/car--v1.png" alt="Book Trip" class="w-16 h-16" />
+          </div>
+          <h2 class="text-xl font-black text-gray-800 mb-2">Book a Trip</h2>
+          <p class="text-gray-600 font-medium text-xs">Browse vehicles and start your journey</p>
+        </div>
       <% end %>
 
-      <%= link_to bookings_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl" do %>
-        <img src="https://img.icons8.com/color/96/timetable.png" alt="Bookings Icon" class="mx-auto mb-4" />
-        <h2 class="text-xl font-bold text-gray-600 mb-2">My Bookings</h2>
-        <%# <p class="text-gray-600 text-sm">Check your active and past bookings.</p> %>
+      <%= link_to bookings_path, class: "dashboard-card relative rounded-3xl shadow-2xl p-6 text-center overflow-hidden cursor-pointer group no-underline" do %>
+        <div class="shine"></div>
+        <div class="relative z-10 h-full flex flex-col justify-center items-center">
+          <div class="icon-wrapper mb-4 rounded-full bg-gradient-to-br from-green-400 to-teal-500 p-3 inline-block">
+            <img src="https://img.icons8.com/color/96/timetable.png" alt="Bookings" class="w-16 h-16" />
+          </div>
+          <h2 class="text-xl font-black text-gray-800 mb-2">My Bookings</h2>
+          <p class="text-gray-600 font-medium text-xs">Check your active and past bookings</p>
+        </div>
       <% end %>
 
-      <%= link_to customer_ride_history_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl" do %>
-        <img src="https://img.icons8.com/color/96/time-machine.png" alt="History Icon" class="mx-auto mb-4" />
-        <h2 class="text-xl font-bold text-gray-600 mb-2">Ride History</h2>
-        <%# <p class="text-gray-600 text-sm">Review your completed trips.</p> %>
+      <%= link_to customer_ride_history_path, class: "dashboard-card relative rounded-3xl shadow-2xl p-6 text-center overflow-hidden cursor-pointer group no-underline" do %>
+        <div class="shine"></div>
+        <div class="relative z-10 h-full flex flex-col justify-center items-center">
+          <div class="icon-wrapper mb-4 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 p-3 inline-block">
+            <img src="https://img.icons8.com/color/96/time-machine.png" alt="History" class="w-16 h-16" />
+          </div>
+          <h2 class="text-xl font-black text-gray-800 mb-2">Ride History</h2>
+          <p class="text-gray-600 font-medium text-xs">Review your completed trips</p>
+        </div>
       <% end %>
 
     <% else %>
-      <%= link_to driver_vehicles_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl" do %>
-        <img src="https://img.icons8.com/?size=100&id=X1dROpaHxxh3&format=png&color=000000" alt="Manage Vehicles Icon" class="mx-auto mb-4" />
-        <h2 class="text-xl font-bold text-gray-600 mb-2">Manage Vehicles</h2>
-        <%# <p class="text-gray-600 text-sm">Add or edit your listed vehicles.</p> %>
+      
+      <%= link_to driver_vehicles_path, class: "dashboard-card relative rounded-3xl shadow-2xl p-6 text-center overflow-hidden cursor-pointer group no-underline" do %>
+        <div class="shine"></div>
+        <div class="relative z-10 h-full flex flex-col justify-center items-center">
+          <div class="icon-wrapper mb-4 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 p-3 inline-block">
+            <img src="https://img.icons8.com/?size=100&id=X1dROpaHxxh3&format=png&color=000000" alt="Manage Vehicles" class="w-16 h-16" />
+          </div>
+          <h2 class="text-xl font-black text-gray-800 mb-2">Manage Vehicles</h2>
+          <p class="text-gray-600 font-medium text-xs">Add or edit your listed vehicles</p>
+        </div>
       <% end %>
 
-      <%= link_to booking_requests_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl" do %>
-        <img src="https://img.icons8.com/?size=100&id=ULeMjbnoKZpi&format=png&color=000000" alt="Booking Requests Icon" class="mx-auto mb-4" />
-        <h2 class="text-xl font-bold text-gray-600 mb-2">Ride Requests</h2>
-        <%# <p class="text-gray-600 text-sm">View and respond to incoming bookings.</p> %>
+      <%= link_to booking_requests_path, class: "dashboard-card relative rounded-3xl shadow-2xl p-6 text-center overflow-hidden cursor-pointer group no-underline" do %>
+        <div class="shine"></div>
+        <div class="relative z-10 h-full flex flex-col justify-center items-center">
+          <div class="icon-wrapper mb-4 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 p-3 inline-block">
+            <img src="https://img.icons8.com/?size=100&id=ULeMjbnoKZpi&format=png&color=000000" alt="Ride Requests" class="w-16 h-16" />
+          </div>
+          <h2 class="text-xl font-black text-gray-800 mb-2">Ride Requests</h2>
+          <p class="text-gray-600 font-medium text-xs">View and respond to incoming bookings</p>
+        </div>
       <% end %>
 
-      <%= link_to driver_ongoing_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl flex flex-col justify-between" do %>
-        <img src="https://img.icons8.com/color/96/timetable.png" alt="Ongoing Rides Icon" class="mx-auto mb-4 h-24 w-24 object-contain" />
-        <h2 class="text-xl font-bold text-gray-600 mb-2">Booked Rides</h2>
-        <%# <p class="text-gray-600 text-sm">See your current accepted rides.</p> %>
+      <%= link_to driver_ongoing_path, class: "dashboard-card relative rounded-3xl shadow-2xl p-6 text-center overflow-hidden cursor-pointer group no-underline" do %>
+        <div class="shine"></div>
+        <div class="relative z-10 h-full flex flex-col justify-center items-center">
+          <div class="icon-wrapper mb-4 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 p-3 inline-block">
+            <img src="https://img.icons8.com/color/96/timetable.png" alt="Booked Rides" class="w-16 h-16" />
+          </div>
+          <h2 class="text-xl font-black text-gray-800 mb-2">Booked Rides</h2>
+          <p class="text-gray-600 font-medium text-xs">See your current accepted rides</p>
+        </div>
       <% end %>
 
-      <%= link_to driver_ride_history_path, class: "bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl" do %>
-        <img src="https://img.icons8.com/color/96/time-machine.png" alt="Driver Ride History Icon" class="mx-auto mb-4" />
-        <h2 class="text-xl font-bold text-gray-600 mb-2">Ride History</h2>
-        <%# <p class="text-gray-600 text-sm">Track your completed trips.</p> %>
+      <%= link_to driver_ride_history_path, class: "dashboard-card relative rounded-3xl shadow-2xl p-6 text-center overflow-hidden cursor-pointer group no-underline" do %>
+        <div class="shine"></div>
+        <div class="relative z-10 h-full flex flex-col justify-center items-center">
+          <div class="icon-wrapper mb-4 rounded-full bg-gradient-to-br from-pink-400 to-red-500 p-3 inline-block">
+            <img src="https://img.icons8.com/color/96/time-machine.png" alt="Driver History" class="w-16 h-16" />
+          </div>
+          <h2 class="text-xl font-black text-gray-800 mb-2">Ride History</h2>
+          <p class="text-gray-600 font-medium text-xs">Track your completed trips</p>
+        </div>
       <% end %>
+
     <% end %>
   </div>
 </div>

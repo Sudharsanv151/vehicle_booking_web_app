@@ -1,62 +1,50 @@
 <div class="max-w-7xl mx-auto px-4 py-4 mt-6">
-  <h1 class="text-2xl font-bold mb-6 text-gray-800">Your Ride History</h1>
+  <h1 class="text-2xl font-bold mb-6 text-white">Your Ride History</h1>
 
   <% if @completed.any? %>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <% @completed.each do |booking| %>
-        <div class="bg-white border border-gray-300 rounded-lg shadow-sm flex flex-col text-sm">
-          <% if booking.vehicle.image.attached? %>
-            <%= image_tag booking.vehicle.image, class: "w-full h-40 object-cover rounded-t-lg" %>
-          <% else %>
-            <div class="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-500 rounded-t-lg text-sm">
-              No Image
-            </div>
-          <% end %>
+        <div class="bg-gradient-to-br from-gray-800 via-gray-800 to-gray-800 border border-gray-700 rounded-2xl shadow-lg overflow-hidden transform hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 text-sm text-gray-200">
+          
+          <!-- Vehicle Image -->
+          <div class="relative group">
+            <% if booking.vehicle.image.attached? %>
+              <div class="overflow-hidden relative">
+                <%= image_tag booking.vehicle.image, class: "w-full h-44 object-cover transition-transform duration-500 group-hover:scale-105 border-b border-gray-700" %>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-70 group-hover:opacity-80 transition-opacity duration-300 rounded-t-2xl"></div>
+              </div>
+            <% else %>
+              <div class="w-full h-44 bg-gray-500 flex items-center justify-center text-gray-400 text-sm border-b border-gray-700 rounded-t-2xl">
+                🚘 No Image Available
+              </div>
+            <% end %>
+            <div class="absolute inset-0 rounded-t-2xl ring-1 ring-blue-400/10 group-hover:ring-blue-400/40 group-hover:shadow-[0_0_25px_rgba(56,189,248,0.3)] transition-all duration-500"></div>
+          </div>
 
-          <div class="p-4 flex flex-col flex-1">
+          <!-- Card Body -->
+          <div class="p-5 flex flex-col flex-1 space-y-2">
+            
             <div class="flex flex-wrap gap-2 mb-2">
-              <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                <strong>From:</strong> <%= booking.start_location.humanize %>
+              <span class="inline-block bg-gray-500/60 px-3 py-1 rounded-full text-gray-300 border border-gray-700">
+                🚩 <strong>From:</strong> <%= booking.start_location.humanize %>
               </span>
-              <span class="inline-block bg-gray-100 px-2 py-1 rounded text-sm text-gray-600">
-                <strong>To:</strong> <%= booking.end_location.humanize %>
+              <span class="inline-block bg-gray-500/60 px-3 py-1 rounded-full text-gray-300 border border-gray-700">
+                🏁 <strong>To:</strong> <%= booking.end_location.humanize %>
               </span>
             </div>
 
-            <h4 class="mb-1">
-              <strong class="font-semibold text-gray-800">Date:</strong>
-              <span class="text-gray-700">
-                <%= booking.start_time&.strftime('%d %b %Y, %I:%M %p') || "Not Started" %>
-              </span>
-            </h4>
-
-            <p class="mb-1">
-              <strong class="font-semibold text-gray-800">Vehicle:</strong>
-              <span class="text-gray-700"><%= booking.vehicle.model %></span>
+            <p><strong class="text-gray-100">🚘 Vehicle:</strong> <%= booking.vehicle.model %></p>
+            <p><strong class="text-gray-100">🕓 Date:</strong> <%= booking.start_time&.strftime('%d %b %Y, %I:%M %p') || "Not Started" %></p>
+            <p><strong class="text-gray-100">👨‍✈️ Driver:</strong> <%= booking.vehicle.driver.user.name %></p>
+            <p><strong class="text-gray-100">💰 Price:</strong> ₹<%= booking.price %> 
+              <span class="ml-2 bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-300 border border-gray-600"><%= booking.payment.payment_type %></span>
             </p>
 
-            <p class="mb-1">
-              <strong class="font-semibold text-gray-800">Driver:</strong>
-              <span class="text-gray-700"><%= booking.vehicle.driver.user.name %></span>
-            </p>
-
-            <p class="mb-1">
-              <strong class="font-semibold text-gray-800">Price:</strong>
-              <span class="text-gray-700">
-                ₹<%= booking.price %>
-                <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                  <%= booking.payment.payment_type %>
-                </span>
-              </span>
-            </p>
-
-            <div class="mt-4 border-t pt-4 border-gray-200 space-y-2">
+            <!-- Ratings -->
+            <div class="mt-3 border-t border-gray-700 pt-3 space-y-2">
               <% ride_rating = booking.ratings.find_by(user_id: @user.id) %>
               <% if ride_rating %>
-                <p>
-                  <strong class="font-semibold text-gray-800">Ride Rating:</strong>
-                  <span class="text-gray-700">⭐ <%= ride_rating.stars %> - <%= ride_rating.comments %></span>
-                </p>
+                <p><strong>⭐ Ride Rating:</strong> <%= ride_rating.stars %> - <%= ride_rating.comments %></p>
                 <div class="flex items-center space-x-2 mt-2">
                   <%= link_to "Edit", edit_rating_path(ride_rating), class: "text-xs bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-2 rounded" %>
                   <%= button_to "Delete", rating_path(ride_rating), method: :delete,
@@ -70,10 +58,7 @@
 
               <% vehicle_rating = booking.vehicle.ratings.find_by(user_id: @user.id) %>
               <% if vehicle_rating %>
-                <p>
-                  <strong class="font-semibold text-gray-800">Vehicle Rating:</strong>
-                  <span class="text-gray-700">⭐ <%= vehicle_rating.stars %> - <%= vehicle_rating.comments %></span>
-                </p>
+                <p><strong>⭐ Vehicle Rating:</strong> <%= vehicle_rating.stars %> - <%= vehicle_rating.comments %></p>
                 <div class="flex items-center space-x-2 mt-2">
                   <%= link_to "Edit", edit_rating_path(vehicle_rating), class: "text-xs bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-2 rounded" %>
                   <%= button_to "Delete", rating_path(vehicle_rating), method: :delete,
@@ -95,7 +80,7 @@
     </div>
 
   <% else %>
-    <p class="text-gray-700 mb-4">You have no completed rides...</p>
+    <p class="text-white mb-4">You have no completed rides...</p>
     <%= link_to "Start booking a ride", vehicles_path,
       class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded no-underline" %>
     <%= link_to "Go to bookings", bookings_path,
