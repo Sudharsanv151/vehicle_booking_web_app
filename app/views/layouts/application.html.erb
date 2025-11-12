@@ -3,15 +3,16 @@
   <head>
     <title>VehicleBookingWebApp</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "tailwind", "application", media: "all", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <%# <script src="https://cdn.tailwindcss.com"></script> %>
+    <meta name="turbo-cache-control" content="no-preview">
+    <script src="https://cdn.tailwindcss.com"></script> 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <script>
       document.addEventListener("turbo:load", function () {
         flatpickr(".datetimepicker", {
@@ -29,19 +30,113 @@
       });
     </script>
 
-
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
       body {
         font-family: 'Inter', sans-serif;
+        position: relative;
+        overflow-x: hidden;
+        background: #0f0f23;
       }
+
+      /* === Animated Gradient Background === */
+      .bg-animated {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1e1e3f 0%, #2d1b4e 50%, #1a1a3e 100%);
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .bg-animated::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: 
+          radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.3) 0%, transparent 50%),
+          radial-gradient(circle at 40% 20%, rgba(72, 118, 255, 0.2) 0%, transparent 50%);
+        animation: pulse 8s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.1); }
+      }
+
+      /* Animated floating orbs */
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(120, 119, 198, 0.1));
+        animation: float-orb 20s ease-in-out infinite;
+        opacity: 0.6;
+      }
+
+      @keyframes float-orb {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(50px, -50px) scale(1.1); }
+        66% { transform: translate(-30px, 30px) scale(0.9); }
+      }
+
+      .orb:nth-child(1) { width: 100px; height: 100px; top: 10%; left: 10%; animation-duration: 25s; }
+      .orb:nth-child(2) { width: 150px; height: 150px; top: 60%; right: 15%; animation-duration: 30s; animation-delay: 5s; }
+      .orb:nth-child(3) { width: 80px; height: 80px; bottom: 15%; left: 20%; animation-duration: 20s; animation-delay: 10s; }
+
+      /* Subtle car animation (background) */
+      .car {
+        position: absolute;
+        width: 60px;
+        height: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px 10px 5px 5px;
+        opacity: 0.12;
+        animation: drive 15s linear infinite;
+      }
+
+      .car::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: 15px;
+        width: 30px;
+        height: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px 8px 0 0;
+      }
+
+      @keyframes drive {
+        0% { left: -100px; }
+        100% { left: calc(100% + 100px); }
+      }
+
+      .car:nth-child(1) { top: 25%; animation-duration: 14s; }
+      .car:nth-child(2) { top: 55%; animation-duration: 18s; animation-delay: 4s; }
+      .car:nth-child(3) { top: 80%; animation-duration: 16s; animation-delay: 8s; }
     </style>
   </head>
 
-  <body class="bg-gray-50 min-h-screen">
-    <%= render "shared/navbar" %>
-    <%= render "shared/flash" %>
+  <body class="relative min-h-screen">
+    <!-- Animated Global Background -->
+    <div class="bg-animated">
+      <div class="orb"></div>
+      <div class="orb"></div>
+      <div class="orb"></div>
+      <div class="car"></div>
+      <div class="car"></div>
+      <div class="car"></div>
+    </div>
 
-    <%= yield %>
+    <!-- Page Content Layer -->
+    <div class="relative z-10">
+      <%= render "shared/navbar" %>
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </div>
 
     <script>
       document.addEventListener("turbo:load", () => {

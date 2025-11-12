@@ -35,7 +35,7 @@ module BookingLifecycle
   end
 
   def finish
-    service = BookingStatusService.new(@booking)
+    service = BookingStatusService.finish(@booking)
     if service.finish
       flash[:notice] = 'Ride completed!'
     else

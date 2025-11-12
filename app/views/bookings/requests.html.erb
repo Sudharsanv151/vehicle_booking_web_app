@@ -1,60 +1,66 @@
 <div class="max-w-7xl mx-auto px-4 py-4 mt-6">
-  <h2 class="text-2xl font-bold mb-4 text-gray-800">Booking Requests</h2>
+  <h2 class="text-2xl font-bold mb-4 text-white">Booking Requests</h2>
 
   <% active_requests = @requests.reject { |b| b.cancelled_by.present? } %>
   <% cancelled_requests = @requests.select { |b| b.cancelled_by.present? } %>
 
   <% if active_requests.blank? %>
-    <p class="text-gray-700 text-md mb-4">You haven't received any booking requests yet.</p>
-    <%# <%= link_to "Back to Home", home_path, class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-md shadow-md no-underline transition-colors duration-200" %>
+    <p class="text-white text-md mb-4">You haven't received any booking requests yet.</p>
   <% else %>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
       <% active_requests.each do |booking| %>
-        <div class="bg-white border border-gray-300 rounded-lg shadow-sm flex flex-col text-sm">
-          <% if booking.vehicle.image.attached? %>
-            <%= image_tag booking.vehicle.image, class: "w-full h-40 object-cover rounded-t-lg" %>
-          <% else %>
-            <div class="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-500 rounded-t-lg text-sm">
-              No Image
-            </div>
-          <% end %>
-
-          <div class="p-4 flex flex-col flex-1">
-            <div class="flex flex-wrap gap-2 mb-1">
-              <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                <strong>From:</strong> <%= booking.start_location.humanize %>
-              </span>
-              <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                <strong>To:</strong> <%= booking.end_location.humanize %>
-              </span>
-            </div>
-
-            <p class="mb-1"><strong class="font-semibold text-gray-800">Vehicle:</strong> <span class="text-gray-700"><%= booking.vehicle.model %></span></p>
-            <p class="mb-1"><strong class="font-semibold text-gray-800">Customer:</strong> <span class="text-gray-700"><%= booking.user.name %></span></p>
-            <p class="mb-1"><strong class="font-semibold text-gray-800">Start:</strong> <span class="text-gray-700"><%= booking.start_time %></span></p>
-            <p class="mb-1"><strong class="font-semibold text-gray-800">Price:</strong> <span class="text-gray-700">₹<%= booking.price %></span></p>
-            <p class="mb-1"><strong class="font-semibold text-gray-800">Mobile:</strong> <span class="text-gray-700"><%= booking.user.mobile_no %></span></p>
-
-            <% if booking.customer_accepted %>
-              <p class="text-green-700 font-semibold mt-2">
-                Customer accepted the proposed price: ₹<%= booking.price %>
-              </p>
+        <div class="bg-gradient-to-br from-gray-800 via-gray-800 to-gray-800 border border-gray-700 rounded-2xl shadow-lg overflow-hidden transform hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 text-sm text-gray-200">
+          
+          <div class="relative group">
+            <% if booking.vehicle.image.attached? %>
+              <div class="overflow-hidden relative">
+                <%= image_tag booking.vehicle.image, class: "w-full h-44 object-cover transition-transform duration-500 group-hover:scale-105 border-b border-gray-700" %>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-70 group-hover:opacity-80 transition-opacity duration-300 rounded-t-2xl"></div>
+              </div>
+            <% else %>
+              <div class="w-full h-44 bg-gray-500 flex items-center justify-center text-gray-400 text-sm border-b border-gray-700 rounded-t-2xl">
+                🚘 No Image Available
+              </div>
             <% end %>
 
-            <% unless booking.customer_accepted %>
+            <div class="absolute inset-0 rounded-t-2xl ring-1 ring-blue-400/10 group-hover:ring-blue-400/40 group-hover:shadow-[0_0_25px_rgba(56,189,248,0.3)] transition-all duration-500"></div>
+          </div>
+
+          <div class="p-5 flex flex-col flex-1 space-y-2">
+            <div class="flex flex-wrap gap-2 mb-2">
+              <span class="inline-block bg-gray-600/50 px-3 py-1 rounded-full text-gray-300 border border-gray-700">
+                🚩 <strong>From:</strong> <%= booking.start_location.humanize %>
+              </span>
+              <span class="inline-block bg-gray-600/50 px-3 py-1 rounded-full text-gray-300 border border-gray-700">
+                🏁 <strong>To:</strong> <%= booking.end_location.humanize %>
+              </span>
+            </div>
+
+            <p><strong class="text-gray-100">🚘 Vehicle:</strong> <%= booking.vehicle.model %></p>
+            <p><strong class="text-gray-100">👤 Customer:</strong> <%= booking.user.name %></p>
+            <p><strong class="text-gray-100">📞 Mobile:</strong> <%= booking.user.mobile_no %></p>
+            <p><strong class="text-gray-100">🕓 Start:</strong> <%= booking.start_time.strftime("%d %b %Y, %I:%M %p") %></p>
+            <p><strong class="text-gray-100">💰 Price:</strong> ₹<%= booking.price %></p>
+
+            <% if booking.customer_accepted %>
+              <span class="inline-block bg-green-800/40 border border-green-500 text-green-300 font-semibold px-3 py-1 rounded-full mt-2">
+                ✅ Customer accepted proposed price ₹<%= booking.price %>
+              </span>
+            <% else %>
               <%= form_with url: propose_price_booking_path(booking), method: :patch, local: true, class: "mt-2 flex gap-2 items-center" do %>
-                <%= number_field_tag :proposed_price, booking.proposed_price || booking.price, step: 1, class: "border px-2 py-1 rounded w-28" %>
-                <%= submit_tag "Propose Price", class: "bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded" %>
+                <%= number_field_tag :proposed_price, booking.proposed_price || booking.price, step: 1, class: "border border-gray-700 bg-gray-900 text-gray-100 px-2 py-1 rounded w-28" %>
+                <%= submit_tag "💬 Propose", class: "bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded-lg shadow-sm transition-all duration-200" %>
               <% end %>
             <% end %>
 
-            <div class="mt-2 flex gap-2">
-              <%= button_to "Accept booking", accept_booking_path(booking), method: :patch,
-                    form: { onsubmit: "return confirm('Are you sure you want to accept this booking?');" },
-                    class: "bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded" %>
-              <%= button_to "Reject booking", reject_booking_path(booking), method: :patch,
-                    form: { onsubmit: "return confirm('Are you sure you want to reject this booking?');" },
-                    class: "bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded" %>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <%= button_to "✅ Accept", accept_booking_path(booking), method: :patch,
+                    form: { onsubmit: "return confirm('Accept this booking?');" },
+                    class: "bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg shadow-md transition-all duration-200" %>
+
+              <%= button_to "❌ Reject", reject_booking_path(booking), method: :patch,
+                    form: { onsubmit: "return confirm('Reject this booking?');" },
+                    class: "bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg shadow-md transition-all duration-200" %>
             </div>
           </div>
         </div>
@@ -63,48 +69,51 @@
   <% end %>
 
   <% if cancelled_requests.any? %>
-    <details class="mb-6 border border-gray-300 rounded-lg p-4 bg-white">
-      <summary class="cursor-pointer text-blue-600 text-sm font-medium mb-2">
+    <details class="mb-6 rounded-lg p-4 bg-white bg-opacity-10">
+      <summary class="cursor-pointer text-white font-medium mb-2">
         Show Rejected Requests (<%= cancelled_requests.count %>)
       </summary>
 
-      <div class="mt-3">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <% cancelled_requests.each do |booking| %>
-            <div class="bg-white border border-gray-300 rounded-lg shadow-sm flex flex-col text-sm opacity-70">
+      <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <% cancelled_requests.each do |booking| %>
+          <div class="bg-gradient-to-br from-gray-800 via-gray-800 to-gray-800 border border-gray-700 rounded-2xl shadow-lg overflow-hidden opacity-75 text-sm text-gray-200">
+            
+            <div class="relative">
               <% if booking.vehicle.image.attached? %>
-                <%= image_tag booking.vehicle.image, class: "w-full h-40 object-cover rounded-t-lg" %>
+                <%= image_tag booking.vehicle.image, class: "w-full h-44 object-cover border-b border-gray-700" %>
               <% else %>
-                <div class="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-500 rounded-t-lg text-sm">
-                  No Image
+                <div class="w-full h-44 bg-gray-500 flex items-center justify-center text-gray-400 text-sm border-b border-gray-700 rounded-t-2xl">
+                  🚘 No Image Available
                 </div>
               <% end %>
-
-              <div class="p-4 flex flex-col flex-1">
-                <div class="flex flex-wrap gap-2 mb-1">
-                  <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                    <strong>From:</strong> <%= booking.start_location.humanize %>
-                  </span>
-                  <span class="inline-block bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                    <strong>To:</strong> <%= booking.end_location.humanize %>
-                  </span>
-                </div>
-
-                <p class="mb-1"><strong class="font-semibold text-gray-800">Vehicle:</strong> <span class="text-gray-700"><%= booking.vehicle.model %></span></p>
-                <p class="mb-1"><strong class="font-semibold text-gray-800">Customer:</strong> <span class="text-gray-700"><%= booking.user.name %></span></p>
-                <p class="mb-1"><strong class="font-semibold text-gray-800">Start:</strong> <span class="text-gray-700"><%= booking.start_time.strftime("%d %b %Y, %I:%M %p") %></span></p>
-                <p class="mb-1"><strong class="font-semibold text-gray-800">Price:</strong> <span class="text-gray-700">₹<%= booking.price %></span></p>
-                <p class="mb-1"><strong class="font-semibold text-gray-800">Mobile:</strong> <span class="text-gray-700"><%= booking.user.mobile_no %></span></p>
-
-                <% if booking.cancelled_by.present? %>
-                  <span class="mt-2 inline-block bg-red-100 text-red-700 font-semibold px-3 py-1 rounded-full">
-                    Cancelled by <%= booking.cancelled_by.capitalize %>  [<%= booking.cancelled_at.in_time_zone.strftime("%d %b %Y, %I:%M %p") %>]
-                  </span>
-                <% end %>
-              </div>
             </div>
-          <% end %>
-        </div>
+
+            <div class="p-5 flex flex-col space-y-2">
+              <div class="flex flex-wrap gap-2 mb-2">
+                <span class="inline-block bg-gray-600/50 px-3 py-1 rounded-full text-gray-300 border border-gray-700">
+                  🚩 <strong>From:</strong> <%= booking.start_location.humanize %>
+                </span>
+                <span class="inline-block bg-gray-600/50 px-3 py-1 rounded-full text-gray-300 border border-gray-700">
+                  🏁 <strong>To:</strong> <%= booking.end_location.humanize %>
+                </span>
+              </div>
+
+              <p><strong class="text-gray-100">🚘 Vehicle:</strong> <%= booking.vehicle.model %></p>
+              <p><strong class="text-gray-100">👤 Customer:</strong> <%= booking.user.name %></p>
+              <p><strong class="text-gray-100">🕓 Start:</strong> <%= booking.start_time.strftime("%d %b %Y, %I:%M %p") %></p>
+              <p><strong class="text-gray-100">💰 Price:</strong> ₹<%= booking.price %></p>
+
+              <% if booking.cancelled_by.present? %>
+                <span class="mt-2 inline-block bg-red-800/40 border border-red-500 text-red-400 font-semibold px-3 py-1 rounded-full">
+                  ❌ Cancelled by <%= booking.cancelled_by.capitalize %>
+                  <span class="text-xs block opacity-80">
+                    [<%= booking.cancelled_at.in_time_zone.strftime("%d %b %Y, %I:%M %p") %>]
+                  </span>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
       </div>
     </details>
   <% end %>

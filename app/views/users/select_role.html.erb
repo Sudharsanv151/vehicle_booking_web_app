@@ -4,33 +4,257 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Select Your Role</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+    
     body {
       font-family: 'Inter', sans-serif;
+      position: relative;
+      overflow: hidden;
+      background: #0f0f23;
     }
+    
+    .bg-animated {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1e1e3f 0%, #2d1b4e 50%, #1a1a3e 100%);
+      z-index: 0;
+    }
+    
+    .bg-animated::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(72, 118, 255, 0.2) 0%, transparent 50%);
+      animation: pulse 8s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.1); }
+    }
+    
+    /* Animated cars in background */
+    .car {
+      position: absolute;
+      width: 60px;
+      height: 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 10px 10px 5px 5px;
+      opacity: 0.15;
+      animation: drive 15s linear infinite;
+    }
+    
+    .car::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 15px;
+      width: 30px;
+      height: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 8px 8px 0 0;
+    }
+    
+    .car::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 10px;
+      width: 40px;
+      height: 10px;
+      background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 70%);
+    }
+    
+    @keyframes drive {
+      0% { left: -100px; }
+      100% { left: calc(100% + 100px); }
+    }
+    
+    .car:nth-child(1) { top: 20%; animation-duration: 12s; animation-delay: 0s; }
+    .car:nth-child(2) { top: 50%; animation-duration: 18s; animation-delay: 3s; opacity: 0.1; }
+    .car:nth-child(3) { top: 75%; animation-duration: 15s; animation-delay: 6s; opacity: 0.12; }
+    
+    /* Floating orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(120, 119, 198, 0.1));
+      animation: float-orb 20s ease-in-out infinite;
+      opacity: 0.6;
+    }
+    
+    @keyframes float-orb {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(50px, -50px) scale(1.1); }
+      66% { transform: translate(-30px, 30px) scale(0.9); }
+    }
+    
+    .orb:nth-child(1) { width: 100px; height: 100px; top: 10%; left: 10%; animation-duration: 25s; }
+    .orb:nth-child(2) { width: 150px; height: 150px; top: 60%; right: 15%; animation-duration: 30s; animation-delay: 5s; }
+    .orb:nth-child(3) { width: 80px; height: 80px; bottom: 15%; left: 20%; animation-duration: 20s; animation-delay: 10s; }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.4), 0 20px 40px rgba(0, 0, 0, 0.1); }
+      50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.6), 0 25px 50px rgba(0, 0, 0, 0.15); }
+    }
+    
+    .card {
+      animation: float 3s ease-in-out infinite;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .card:nth-child(1) {
+      animation-delay: 0s;
+    }
+    
+    .card:nth-child(2) {
+      animation-delay: 0.5s;
+    }
+    
+    .card:hover {
+      transform: translateY(-12px) scale(1.05);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+      background: rgba(255, 255, 255, 1);
+    }
+    
+    .icon-wrapper {
+      position: relative;
+      display: inline-block;
+      animation: glow 2s ease-in-out infinite;
+    }
+    
+    .card:hover .icon-wrapper {
+      animation: none;
+    }
+    
+    .shine {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    }
+    
+    .card:hover .shine {
+      animation: shine 0.6s ease-in-out;
+    }
+    
+    @keyframes shine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      animation: sparkle 2s infinite;
+    }
+    
+    @keyframes sparkle {
+      0%, 100% { opacity: 0; transform: scale(0); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+    
+    .sparkle:nth-child(1) { top: 15%; left: 15%; animation-delay: 0s; }
+    .sparkle:nth-child(2) { top: 25%; right: 20%; animation-delay: 0.5s; }
+    .sparkle:nth-child(3) { bottom: 30%; left: 25%; animation-delay: 1s; }
+    .sparkle:nth-child(4) { top: 70%; right: 15%; animation-delay: 1.5s; }
+    .sparkle:nth-child(5) { bottom: 20%; right: 30%; animation-delay: 2s; }
   </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-  <div class="flex flex-col bg-gray-100 p-6">
-    <h1 class="text-4xl font-extrabold text-gray-800 mb-10 text-center">Select Your Role</h1>
+<body class="flex items-center justify-center min-h-screen">
+  <div class="bg-animated">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="car"></div>
+    <div class="car"></div>
+    <div class="car"></div>
+  </div>
+  
+  <div class="sparkle"></div>
+  <div class="sparkle"></div>
+  <div class="sparkle"></div>
+  <div class="sparkle"></div>
+  <div class="sparkle"></div>
+  
+  <div class="flex flex-col p-6 relative z-10">
+    <div class="text-center mb-12">
+      <h1 class="text-6xl font-black text-white mb-4 drop-shadow-2xl tracking-tight">
+        Welcome Back!
+      </h1>
+      <p class="text-xl text-white/90 font-medium drop-shadow-lg">Choose your role to continue</p>
+    </div>
 
-    <div class="flex flex-row items-center justify-center mt-10 space-x-8">
-      <div class="px-6 bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl ">
-        <%= link_to new_user_session_path(role: 'customer') do %>
-          <img src="https://img.icons8.com/color/96/user.png" alt="Customer Icon" class="mx-auto mb-4" />
-          <h2 class="text-2xl font-bold text-gray-800 mb-2">I'm a Customer</h2>
-          <%# <p class="text-gray-600 text-sm">Book rides and manage your trips easily.</p> %>
-        <% end %>
+    <div class="flex flex-row items-stretch justify-center mt-10 space-x-12">
+      <div class="card relative rounded-3xl shadow-2xl p-8 w-72 text-center overflow-hidden cursor-pointer group">
+        <div class="shine"></div>
+        <a href="/users/sign_in?role=customer" class="block h-full flex flex-col justify-between">
+          <div>
+            <div class="icon-wrapper mb-6 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 p-4 inline-block">
+              <img src="https://img.icons8.com/color/96/user.png" alt="Customer Icon" class="w-20 h-20" />
+            </div>
+            <h2 class="text-3xl font-black gradient-text mb-3">I'm a Customer</h2>
+            <p class="text-gray-600 font-medium">Book rides effortlessly</p>
+          </div>
+          <div class="mt-6 inline-flex items-center justify-center text-purple-600 font-bold group-hover:translate-x-2 transition-transform">
+            Continue 
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </div>
+        </a>
       </div>
-      <div class="px-6 bg-white rounded-2xl shadow-lg p-6 w-64 text-center transform transition hover:-translate-y-2 hover:shadow-2xl">
-        <%= link_to new_user_session_path(role: 'driver') do %>
-          <img src="https://img.icons8.com/color/96/driver.png" alt="Driver Icon" class="mx-auto mb-4" />
-          <h2 class="text-2xl font-bold text-gray-800 mb-2">I'm a Driver</h2>
-          <%# <p class="text-gray-600 text-sm">Accept rides and earn on your schedule.</p> %>
-        <% end %>
+
+      <div class="card relative rounded-3xl shadow-2xl p-8 w-72 text-center overflow-hidden cursor-pointer group">
+        <div class="shine"></div>
+        <a href="/users/sign_in?role=driver" class="block h-full flex flex-col justify-between">
+          <div>
+            <div class="icon-wrapper mb-6 rounded-full bg-gradient-to-br from-green-400 to-blue-500 p-4 inline-block">
+              <img src="https://img.icons8.com/color/96/driver.png" alt="Driver Icon" class="w-20 h-20" />
+            </div>
+            <h2 class="text-3xl font-black gradient-text mb-3">I'm a Driver</h2>
+            <p class="text-gray-600 font-medium">Start earning today</p>
+          </div>
+          <div class="mt-6 inline-flex items-center justify-center text-purple-600 font-bold group-hover:translate-x-2 transition-transform">
+            Continue 
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </div>
+        </a>
       </div>
     </div>
   </div>
